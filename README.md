@@ -2,7 +2,7 @@
 
 Unreal Engine 4 Media Framework plug-in for NewTek's Network Device Interface (NDI).
 
-![Screenshot](Docs/screenshot.png)
+![Logo](Docs/logo.png)
 
 
 ## About
