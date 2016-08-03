@@ -271,6 +271,8 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 
 	CurrentUrl = Url;
 
+	MediaEvent.Broadcast(EMediaEvent::MediaOpened);
+
 	return true;
 }
 
