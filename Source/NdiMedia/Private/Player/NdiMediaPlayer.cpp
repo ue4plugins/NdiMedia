@@ -205,53 +205,16 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 
 	const TCHAR* SourceUrl = &Url[6];
 
-	// enumerate available sources
-	const NDIlib_find_create_t FindCreateDesc = { TRUE, NULL };
-	NDIlib_find_instance_t Find = NDIlib_find_create(&FindCreateDesc);
-
-	if (Find == nullptr)
-	{
-		UE_LOG(LogNdiMedia, Error, TEXT("Cannot open NDI media source %s: NDIFind instance couldn't be created"), SourceUrl);
-
-		return false;
-	}
-
-	DWORD NumSources = 0;
-	const NDIlib_source_t* Sources = NDIlib_find_get_sources(Find, &NumSources, 10000);
-
-	if (NumSources == 0)
-	{
-		UE_LOG(LogNdiMedia, Warning, TEXT("Failed to open NDI media source %s: no NDI sources found"), SourceUrl);
-		NDIlib_find_destroy(Find);
-
-		return false;
-	}
-
-	// locate the desired source
-	const NDIlib_source_t* Source = nullptr;
-
-	for (DWORD SourceIndex = 0; SourceIndex < NumSources; ++SourceIndex)
-	{
-		if (FCStringAnsi::Stricmp(TCHAR_TO_ANSI(SourceUrl), Sources[SourceIndex].p_ip_address) == 0)
-		{
-			Source = &Sources[SourceIndex];
-
-			break;
-		}
-	}
-
-	if (Source == nullptr)
-	{
-		UE_LOG(LogNdiMedia, Warning, TEXT("Failed to open NDI media source %s: the source could not be found"), SourceUrl);
-		NDIlib_find_destroy(Find);
-
-		return false;
-	}
-
 	// create receiver
+	NDIlib_source_t Source;
+	{
+		Source.p_ip_address = TCHAR_TO_ANSI(SourceUrl);
+		Source.p_ndi_name = nullptr;
+	}
+
 	// @todo gmp: make NDI options customizable
 	NDIlib_recv_create_t RcvCreateDesc = {
-		*Source,
+		Source,
 		NDIlib_recv_color_format_BGRA_BGRA,
 		NDIlib_recv_bandwidth_highest,		// highest quality
 		TRUE								// allow fielded video
@@ -260,7 +223,6 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 	FScopeLock Lock(&CriticalSection);
 
 	Receiver = NDIlib_recv_create2(&RcvCreateDesc);
-	NDIlib_find_destroy(Find);
 
 	if (Receiver == nullptr)
 	{
