@@ -11,8 +11,15 @@ namespace UnrealBuildTool.Rules
 					"Core",
 					"CoreUObject",
 					"MediaAssets",
+					"NdiMedia",
 					"UnrealEd",
                 }
+			);
+
+			PrivateIncludePathModuleNames.AddRange(
+				new string [] {
+					"AssetTools",
+				}
 			);
 
 			PrivateIncludePaths.AddRange(

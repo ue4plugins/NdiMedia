@@ -21,6 +21,7 @@ namespace UnrealBuildTool.Rules
 				new string[] {
 					"Core",
 					"CoreUObject",
+					"Networking",
 					"Projects",
 					"RenderCore",
 				}
@@ -36,9 +37,15 @@ namespace UnrealBuildTool.Rules
 			PrivateIncludePaths.AddRange(
 				new string[] {
 					"NdiMedia/Private",
-					"NdiMedia/Private/Ndi",
+					"NdiMedia/Private/Assets",
 					"NdiMedia/Private/Player",
 					"NdiMedia/Private/Shared",
+				}
+			);
+
+			PublicDependencyModuleNames.AddRange(
+				new string[] {
+					"MediaAssets",
 				}
 			);
 

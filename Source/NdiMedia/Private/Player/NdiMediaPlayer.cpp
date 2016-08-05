@@ -206,18 +206,19 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 	const TCHAR* SourceUrl = &Url[6];
 
 	// create receiver
+	int64 Bandwidth = Options.GetMediaOption("Bandwidth", (int64)NDIlib_recv_bandwidth_highest);
+
 	NDIlib_source_t Source;
 	{
 		Source.p_ip_address = TCHAR_TO_ANSI(SourceUrl);
 		Source.p_ndi_name = nullptr;
 	}
 
-	// @todo gmp: make NDI options customizable
 	NDIlib_recv_create_t RcvCreateDesc = {
 		Source,
 		NDIlib_recv_color_format_BGRA_BGRA,
-		NDIlib_recv_bandwidth_highest,		// highest quality
-		TRUE								// allow fielded video
+		(NDIlib_recv_bandwidth_e)Bandwidth,
+		TRUE // allow fielded video
 	};
 
 	FScopeLock Lock(&CriticalSection);

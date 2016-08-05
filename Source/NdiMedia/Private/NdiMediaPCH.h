@@ -15,6 +15,7 @@
 #include "Runtime/Media/Public/IMediaOptions.h"
 #include "Runtime/Media/Public/IMediaStringSink.h"
 #include "Runtime/Media/Public/IMediaTextureSink.h"
+#include "Runtime/Networking/Public/Networking.h"
 #include "Runtime/Projects/Public/Interfaces/IPluginManager.h"
 #include "Runtime/RenderCore/Public/RenderingThread.h"
 

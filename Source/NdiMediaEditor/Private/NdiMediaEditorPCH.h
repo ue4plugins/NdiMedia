@@ -2,4 +2,7 @@
 
 #pragma once
 
+#include "Developer/AssetTools/Public/AssetTypeCategories.h"
 #include "Runtime/Core/Public/Core.h"
+
+#include "../../NdiMedia/Public/NdiMediaSource.h"
