@@ -2,9 +2,7 @@
 
 #include "NdiMediaPCH.h"
 #include "INdiMediaModule.h"
-//#include "Ndi.h"
 #include "NdiMediaPlayer.h"
-#include "NdiMediaSettings.h"
 
 
 DEFINE_LOG_CATEGORY(LogNdiMedia);

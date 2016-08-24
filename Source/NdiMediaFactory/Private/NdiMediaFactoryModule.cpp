@@ -3,6 +3,7 @@
 #include "NdiMediaFactoryPCH.h"
 #include "IMediaPlayerFactory.h"
 #include "ModuleInterface.h"
+#include "NdiMediaSettings.h"
 
 
 #define LOCTEXT_NAMESPACE "FNdiMediaFactoryModule"
