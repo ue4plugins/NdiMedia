@@ -13,7 +13,6 @@ namespace UnrealBuildTool.Rules
 			DynamicallyLoadedModuleNames.AddRange(
 				new string[] {
 					"Media",
-					"Settings",
 				}
 			);
 
@@ -21,6 +20,7 @@ namespace UnrealBuildTool.Rules
 				new string[] {
 					"Core",
 					"CoreUObject",
+					"NdiMediaFactory",
 					"Networking",
 					"Projects",
 					"RenderCore",
@@ -30,7 +30,6 @@ namespace UnrealBuildTool.Rules
 			PrivateIncludePathModuleNames.AddRange(
 				new string[] {
 					"Media",
-					"Settings",
 				}
 			);
 
@@ -39,7 +38,6 @@ namespace UnrealBuildTool.Rules
 					"NdiMedia/Private",
 					"NdiMedia/Private/Assets",
 					"NdiMedia/Private/Player",
-					"NdiMedia/Private/Shared",
 				}
 			);
 

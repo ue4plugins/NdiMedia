@@ -60,25 +60,6 @@ public:
 			return;
 		}
 
-#if WITH_EDITOR
-		// register settings
-		ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings");
-
-		if (SettingsModule != nullptr)
-		{
-			ISettingsSectionPtr SettingsSection = SettingsModule->RegisterSettings("Project", "Plugins", "NdiMedia",
-				LOCTEXT("NdiMediaSettingsName", "NDI Media"),
-				LOCTEXT("NdiMediaSettingsDescription", "Configure the NDI Media plug-in."),
-				GetMutableDefault<UNdiMediaSettings>()
-			);
-
-			if (SettingsSection.IsValid())
-			{
-				SettingsSection->OnModified().BindRaw(this, &FNdiMediaModule::HandleSettingsSaved);
-			}
-		}
-#endif // WITH_EDITOR
-
 		Initialized = true;
 	}
 
@@ -93,24 +74,6 @@ public:
 
 		// shut down NDI
 		NDIlib_destroy();
-
-#if WITH_EDITOR
-		// unregister settings
-		ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings");
-
-		if (SettingsModule != nullptr)
-		{
-			SettingsModule->UnregisterSettings("Project", "Plugins", "NdiMedia");
-		}
-#endif // WITH_EDITOR
-	}
-
-private:
-
-	/** Callback for when the settings were saved. */
-	bool HandleSettingsSaved()
-	{
-		return true;
 	}
 
 private:

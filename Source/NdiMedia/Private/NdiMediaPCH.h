@@ -2,11 +2,6 @@
 
 #pragma once
 
-#if WITH_EDITOR
-	#include "Developer/Settings/Public/ISettingsModule.h"
-	#include "Developer/Settings/Public/ISettingsSection.h"
-#endif
-
 #include "Runtime/Core/Public/Core.h"
 #include "Runtime/Core/Public/Containers/Ticker.h"
 #include "Runtime/Core/Public/Modules/ModuleManager.h"
@@ -18,6 +13,8 @@
 #include "Runtime/Networking/Public/Networking.h"
 #include "Runtime/Projects/Public/Interfaces/IPluginManager.h"
 #include "Runtime/RenderCore/Public/RenderingThread.h"
+
+#include "../../NdiMediaFactory/Public/NdiMediaSettings.h"
 
 #if PLATFORM_LINUX || PLATFORM_MAC
 	#include "Processing.NDI.Lib.h"

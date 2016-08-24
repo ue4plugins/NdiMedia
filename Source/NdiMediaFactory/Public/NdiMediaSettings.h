@@ -9,8 +9,13 @@
  * Settings for the NdiMedia module.
  */
 UCLASS(config=Engine)
-class UNdiMediaSettings
+class NDIMEDIAFACTORY_API UNdiMediaSettings
 	: public UObject
 {
 	GENERATED_BODY()
+
+public:
+
+	/** Default constructor. */
+	UNdiMediaSettings();
 };
