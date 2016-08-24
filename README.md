@@ -62,12 +62,22 @@ to copy the DLL to the plug-in's binaries directory, i.e. copy
 
 ## Dependencies
 
-This plug-in requires Unreal Engine 4 source code from the Master branch.
+This plug-in requires Visual Studio and either a C++ code project or the full
+Unreal Engine 4 source code from GitHub. If you are new to programming in UE4,
+please see the official [Programming Guide](https://docs.unrealengine.com/latest/INT/Programming/index.html)! 
 
 
 ## Usage
 
-Clone this repository into your game's */Engine/Plugins/Media* directory and compile your game.
+You can use this plug-in as a project plug-in, or an Engine plug-in.
+
+If you use it as a project plug-in, clone this repository into your project's
+*/Plugins* directory and compile your game in Visual Studio. A C++ code project
+is required for this to work.
+
+If you use it as an Engine plug-in, clone this repository into the
+*/Engine/Plugins/Media* directory and compile your game. Full Unreal Engine 4
+source code from GitHub is required for this.
 
 
 ## Support
@@ -81,3 +91,4 @@ or email us at info@headcrash.industries
 
 * [NewTek NDI SDK Download](http://pages.newtek.com/NDI-Developers.html)
 * [NewTek NDI Homepage](http://newtek.com/ndi.html)
+* [Introduction to UE4 Plugins](https://wiki.unrealengine.com/An_Introduction_to_UE4_Plugins)
