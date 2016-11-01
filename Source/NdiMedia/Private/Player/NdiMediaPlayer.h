@@ -8,6 +8,9 @@
 #include "IMediaTracks.h"
 
 
+class FNdiMediaAudioSampler;
+
+
 /**
  * Implements a media player using the Windows Media Foundation framework.
  */
@@ -56,6 +59,7 @@ public:
 	virtual void Close() override;
 	virtual IMediaControls& GetControls() override;
 	virtual FString GetInfo() const override;
+	virtual FName GetName() const override;
 	virtual IMediaOutput& GetOutput() override;
 	virtual FString GetStats() const override;
 	virtual IMediaTracks& GetTracks() override;
@@ -74,8 +78,7 @@ public:
 	//~ IMediaOutput interface
 
 	virtual void SetAudioSink(IMediaAudioSink* Sink) override;
-	virtual void SetCaptionSink(IMediaStringSink* Sink) override;
-	virtual void SetImageSink(IMediaTextureSink* Sink) override;
+	virtual void SetOverlaySink(IMediaOverlaySink* Sink) override;
 	virtual void SetVideoSink(IMediaTextureSink* Sink) override;
 
 public:
@@ -96,11 +99,40 @@ public:
 
 protected:
 
-	/** Capture the latest audio frame data and forward it to the sink. */
-	void CaptureAudioFrame();
-
 	/** Capture the latest video frame data and forward it to the sink. */
 	void CaptureVideoFrame();
+
+	/**
+	 * Process a received audio frame.
+	 *
+	 * @param AudioFrame The audio frame to process.
+	 * @see ProcessVideoFrame
+	 */
+	void ProcessAudioFrame(const NDIlib_audio_frame_t& AudioFrame);
+
+	/**
+	 * Process a received audio frame.
+	 *
+	 * @param AudioFrame The audio frame to process.
+	 * @see ProcessVideoFrame
+	 */
+	void ProcessVideoFrame(const NDIlib_video_frame_t& VideoFrame);
+
+	/**
+	 * Send the given metadata to the connection.
+	 *
+	 * @param Metadata The metadata to send.
+	 * @param Timecode Optional timecode (default = 0).
+	 */
+	void SendMetadata(const FString& Metadata, int64 Timecode = 0);
+
+	/** Update the audio sampler's receiver instance. */
+	void UpdateAudioSampler();
+
+private:
+
+	/** Callback for new samples from the audio sampler thread. */
+	void HandleAudioSamplerSample(const NDIlib_audio_frame_t& AudioFrame);
 
 private:
 
@@ -112,23 +144,44 @@ private:
 
 private:
 
-	/** Whether the current source is connected. */
-	bool Connected;
+	/** Index of the selected audio track. */
+	int32 SelectedAudioTrack;
+
+	/** Index of the selected video track. */
+	int32 SelectedVideoTrack;
+
+private:
+
+	/** The audio sampler thread. */
+	FNdiMediaAudioSampler* AudioSampler;
 
 	/** Critical section for synchronizing access to receiver and sinks. */
 	FCriticalSection CriticalSection;
 
+	/** Current state of the media player. */
+	EMediaState CurrentState;
+
 	/** The currently opened URL. */
 	FString CurrentUrl;
 
+	/** Number of audio channels in the last received sample. */
 	int32 LastAudioChannels;
+
+	/** Audio sample rate in the last received sample. */
 	int32 LastAudioSampleRate;
+
+	/** Video dimensions in the last received sample. */
 	FIntPoint LastVideoDimensions;
+
+	/** Video frame rate in the last received sample. */
 	float LastVideoFrameRate;
 
 	/** Event delegate that is invoked when a media event occurred. */
 	FOnMediaEvent MediaEvent;
 
+	/** Whether the player is paused. */
+	bool Paused;
+
 	/** The current receiver instance. */
-	void* Receiver;
+	void* ReceiverInstance;
 };

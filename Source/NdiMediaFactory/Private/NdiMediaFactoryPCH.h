@@ -12,5 +12,6 @@
 #include "Runtime/CoreUObject/Public/CoreUObject.h"
 #include "Runtime/Media/Public/IMediaModule.h"
 #include "Runtime/Media/Public/IMediaOptions.h"
+#include "Runtime/Projects/Public/Interfaces/IPluginManager.h"
 
 #include "../../NdiMedia/Public/INdiMediaModule.h"

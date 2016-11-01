@@ -12,6 +12,9 @@ namespace UnrealBuildTool.Rules
 					"CoreUObject",
 					"MediaAssets",
 					"NdiMedia",
+					"PropertyEditor",
+					"Slate",
+					"SlateCore",
 					"UnrealEd",
                 }
 			);
@@ -25,6 +28,8 @@ namespace UnrealBuildTool.Rules
 			PrivateIncludePaths.AddRange(
 				new string[] {
 					"NdiMediaEditor/Private",
+					"NdiMediaEditor/Private/Customizations",
+					"NdiMediaEditor/Private/Factories",
 				}
 			);
 		}

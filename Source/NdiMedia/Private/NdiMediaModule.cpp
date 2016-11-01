@@ -2,6 +2,8 @@
 
 #include "NdiMediaPCH.h"
 #include "INdiMediaModule.h"
+#include "Ndi.h"
+#include "NdiMediaFinder.h"
 #include "NdiMediaPlayer.h"
 
 
@@ -43,20 +45,13 @@ public:
 
 	virtual void StartupModule() override
 	{
-		// initialize NDI
-		if (!NDIlib_is_supported_CPU())
-		{
-			UE_LOG(LogNdiMedia, Error, TEXT("Cannot initialize NDI: CPU is not supported"));
-
-			return;
-		}
-
-		if (!NDIlib_initialize())
+		if (!FNdi::Initialize())
 		{
 			UE_LOG(LogNdiMedia, Error, TEXT("Failed to initialize NDI"));
-
 			return;
 		}
+
+		GetMutableDefault<UNdiMediaFinder>()->Initialize();
 
 		Initialized = true;
 	}
@@ -71,7 +66,7 @@ public:
 		Initialized = false;
 
 		// shut down NDI
-		NDIlib_destroy();
+		FNdi::Shutdown();
 	}
 
 private:

@@ -37,7 +37,9 @@ namespace UnrealBuildTool.Rules
 				new string[] {
 					"NdiMedia/Private",
 					"NdiMedia/Private/Assets",
+					"NdiMedia/Private/Ndi",
 					"NdiMedia/Private/Player",
+					"NdiMedia/Private/Shared",
 				}
 			);
 
@@ -47,39 +49,39 @@ namespace UnrealBuildTool.Rules
 				}
 			);
 
-			// add VLC libraries
-			string SDKDir = System.Environment.GetEnvironmentVariable("NDI_SDK_DIR");
+			// add NDI libraries
+			string NdiDir = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "ThirdParty"));
+			string LibDir = Path.Combine(NdiDir, "lib");
 
-			if (string.IsNullOrEmpty(SDKDir))
+			PrivateIncludePaths.Add(Path.Combine(NdiDir, "include"));
+
+			if (Target.Platform == UnrealTargetPlatform.IOS)
 			{
-				System.Console.WriteLine("NdiMedia plug-in requires NDI_SDK_DIR environment variable to be set");
-
-				return;
+				PublicLibraryPaths.Add(Path.Combine(LibDir, "apple", "iOS"));
+				PublicAdditionalLibraries.Add("libndi_ios.a");
 			}
-
-			if (Target.Platform == UnrealTargetPlatform.Linux)
+			else if (Target.Platform == UnrealTargetPlatform.Linux)
 			{
-				PrivateIncludePaths.Add(Path.Combine(SDKDir, "include"));
-				PublicLibraryPaths.Add(Path.Combine(SDKDir, "lib", "x86_x64-linux-gnu-5.3"));
-				PublicAdditionalLibraries.Add("libndi.a");
+				RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(NdiDir, "linux", "x86_64-linux-gnu-5.4", "libndi.so.1.0.1")));
 			}
 			else if (Target.Platform == UnrealTargetPlatform.Mac)
 			{
-				PrivateIncludePaths.Add(Path.Combine(SDKDir, "include"));
-				PublicLibraryPaths.Add(Path.Combine(SDKDir, "lib", "x64"));
-				PublicAdditionalLibraries.Add("libndi.dylib");
+				PublicDelayLoadDLLs.Add("libndi.dylib");
+				RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(NdiDir, "apple", "x86", "libndi.dylib")));
 			}
 			else if (Target.Platform == UnrealTargetPlatform.Win32)
 			{
-				PrivateIncludePaths.Add(Path.Combine(SDKDir, "Include"));
-				PublicLibraryPaths.Add(Path.Combine(SDKDir, "Lib", "x86"));
+				PublicLibraryPaths.Add(Path.Combine(LibDir, "windows", "x86"));
 				PublicAdditionalLibraries.Add("Processing.NDI.Lib.x86.lib");
+				PublicDelayLoadDLLs.Add("Processing.NDI.Lib.x86.dll");
+				RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(NdiDir, "windows", "x86", "Processing.NDI.Lib.x86.dll")));
 			}
 			else if (Target.Platform == UnrealTargetPlatform.Win64)
 			{
-				PrivateIncludePaths.Add(Path.Combine(SDKDir, "Include"));
-				PublicLibraryPaths.Add(Path.Combine(SDKDir, "Lib", "x64"));
+				PublicLibraryPaths.Add(Path.Combine(LibDir, "windows", "x64"));
 				PublicAdditionalLibraries.Add("Processing.NDI.Lib.x64.lib");
+				PublicDelayLoadDLLs.Add("Processing.NDI.Lib.x64.dll");
+				RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(NdiDir, "windows", "x64", "Processing.NDI.Lib.x64.dll")));
 			}
 			else
 			{

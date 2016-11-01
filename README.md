@@ -19,45 +19,18 @@ that are not yet available in the UE4 Master branch.
 
 ## Supported Platforms
 
-This plug-in was last built against **Unreal Engine 4.13 Preview** and tested
-against the following platforms:
+This plug-in was last built against **Unreal Engine 4.14** and tested on the
+following platforms:
 
-- ~~Linux~~
-- ~~Mac~~
 - Windows
 
 
 ## Prerequisites
 
-This plug-in requires the Newtek NDI SDK, which can be downloaded for free after
-registering on the Newtek web site. The current license terms do not allow for
-the SDK files to be redistributed with this plug-in, so that some manual
-per-platform configuration is required. The plan for future versions of this
-plug-in is to become self-contained, however.
-
-### Linux
-
-Download and unzip the NDI SDK for Linux into a directory of your choice and add
-a *NDI_SDK_DIR* environment variable that points to this directory. The NDI
-library will be linked statically.
-
-### Mac
-
-Download and unzip the NDI SDK for OSX into a directory of your choice and add
-a *NDI_SDK_DIR* environment variable that points to this directory. The NDI
-library will be linked statically.
-
-### Windows
-
-Install the NDI SDK for Windows into a directory of your choice. The installer
-does not currently create any environment variables, so you have to add one
-manually. Add *NDI_SDK_DIR* and point it to the installation directory,
-i.e. *c:\Program Files\NewTek\NewTek NDI SDK*
-
-The NDI library will be linked dynamically, which means that, for now you have
-to copy the DLL to the plug-in's binaries directory, i.e. copy
-*c:\Program Files\NewTek\NewTek NDI SDK\Bin\x64\Processing.NDI.Lib.x64.dll* to
-*\Engine\Plugins\Media\NdiMedia\Binaries\Win64\*
+All required header files and libraries for supported platforms are included in
+this plug-in. If you'd like to make modifications to this plug-in, download the
+latest version of the NDI SDK from the Newtek web site for updated documentation
+and files.
 
 
 ## Dependencies

@@ -17,6 +17,7 @@ namespace UnrealBuildTool.Rules
 					"Core",
 					"CoreUObject",
 					"MediaAssets",
+					"Projects",
 				}
 			);
 
