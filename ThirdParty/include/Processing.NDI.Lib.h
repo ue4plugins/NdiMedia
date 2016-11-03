@@ -1,15 +1,25 @@
 #pragma once
 
-//-------------------------------------------------------------------------------------------------------------------
-// (c)2016 NewTek, inc.
+// NOTE : The following license applies to this file ONLY and not to the SDK as a whole. Please review the SDK documentation for
+// the description of the full license terms.
 //
-// This library is provided under the license terms that are provided within the 
-// NDI SDK installer. If you do not expressely agree to these terms then this library
-// may be used for no purpose at all.
-//
-// For any questions or comments please email: ndi@newtek.com
+//***********************************************************************************************************************************************
 // 
-//-------------------------------------------------------------------------------------------------------------------
+// Copyright(c) 2016 NewTek, inc
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
+// files(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, 
+// merge, publish, distribute, sublicense, and / or sell copies of the Software, and to permit persons to whom the Software is 
+// furnished to do so, subject to the following conditions :
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE 
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION 
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+//***********************************************************************************************************************************************
 
 // Is this library being compiled, or imported by another application.
 #ifdef _WIN32
