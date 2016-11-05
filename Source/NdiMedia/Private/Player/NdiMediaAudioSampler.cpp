@@ -64,15 +64,16 @@ void FNdiMediaAudioSampler::Stop()
 
 void FNdiMediaAudioSampler::SampleAudio(uint32 Timeout)
 {
+	void* CurrentReceiverInstance = ReceiverInstance;
+
+	if (CurrentReceiverInstance == nullptr)
+	{
+		return;
+	}
+
+	// fetch audio frame
 	NDIlib_audio_frame_t AudioFrame;
 	{
-		FScopeLock Lock(&CriticalSection);
-
-		if (ReceiverInstance == nullptr)
-		{
-			return;
-		}
-
 		NDIlib_frame_type_e FrameType = NDIlib_recv_capture(ReceiverInstance, nullptr, &AudioFrame, nullptr, Timeout);
 
 		if (FrameType == NDIlib_frame_type_error)
@@ -87,6 +88,12 @@ void FNdiMediaAudioSampler::SampleAudio(uint32 Timeout)
 		}
 	}
 
-	SamplesDelegate.ExecuteIfBound(AudioFrame);
-	NDIlib_recv_free_audio(ReceiverInstance, &AudioFrame);
+	// forward frame to listener
+	FScopeLock Lock(&CriticalSection);
+
+	if (CurrentReceiverInstance == ReceiverInstance)
+	{
+		SamplesDelegate.ExecuteIfBound(AudioFrame);
+		NDIlib_recv_free_audio(ReceiverInstance, &AudioFrame);
+	}
 }
