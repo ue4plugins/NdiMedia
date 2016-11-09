@@ -46,7 +46,7 @@ uint32 FNdiMediaAudioSampler::Run()
 {
 	while (!Stopping)
 	{
-		SampleAudio(1000);
+		SampleAudio(5);
 	}
 	
 	return 0;

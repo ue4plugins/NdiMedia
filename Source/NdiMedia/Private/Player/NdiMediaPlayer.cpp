@@ -68,6 +68,7 @@ bool FNdiMediaPlayer::Tick(float DeltaTime)
 	if ((State != CurrentState) && (AudioSink != nullptr))
 	{
 		CurrentState = State;
+		UpdateAudioSampler();
 
 		if (State == EMediaState::Playing)
 		{
@@ -160,8 +161,6 @@ bool FNdiMediaPlayer::SetRate(float Rate)
 		return false;
 	}
 
-	UpdateAudioSampler();
-
 	return true;
 }
 
@@ -207,6 +206,8 @@ void FNdiMediaPlayer::Close()
 
 	SelectedAudioTrack = INDEX_NONE;
 	SelectedVideoTrack = INDEX_NONE;
+
+	UpdateAudioSampler();
 
 	MediaEvent.Broadcast(EMediaEvent::TracksChanged);
 	MediaEvent.Broadcast(EMediaEvent::MediaClosed);
@@ -742,11 +743,8 @@ void FNdiMediaPlayer::SendMetadata(const FString& Metadata, int64 Timecode)
 
 void FNdiMediaPlayer::UpdateAudioSampler()
 {
-	AudioSampler->SetReceiverInstance(
-		(!Paused && (ReceiverInstance != nullptr) && (AudioSink != nullptr) && (SelectedAudioTrack == 0))
-			? ReceiverInstance
-			: nullptr
-	);
+	const bool SampleAudio = !Paused && (AudioSink != nullptr) && (SelectedAudioTrack == 0);
+	AudioSampler->SetReceiverInstance(SampleAudio ? ReceiverInstance : nullptr);
 }
 
 
