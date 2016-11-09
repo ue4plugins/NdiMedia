@@ -72,12 +72,20 @@ bool FNdiMediaPlayer::Tick(float DeltaTime)
 		if (State == EMediaState::Playing)
 		{
 			MediaEvent.Broadcast(EMediaEvent::PlaybackResumed);
-			AudioSink->ResumeAudioSink();
+
+			if (AudioSink != nullptr)
+			{
+				AudioSink->ResumeAudioSink();
+			}
 		}
 		else
 		{
 			MediaEvent.Broadcast(EMediaEvent::PlaybackSuspended);
-			AudioSink->PauseAudioSink();
+
+			if (AudioSink != nullptr)
+			{
+				AudioSink->PauseAudioSink();
+			}
 		}
 	}
 
