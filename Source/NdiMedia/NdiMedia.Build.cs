@@ -62,26 +62,26 @@ namespace UnrealBuildTool.Rules
 			}
 			else if (Target.Platform == UnrealTargetPlatform.Linux)
 			{
-				RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(NdiDir, "linux", "x86_64-linux-gnu-5.4", "libndi.so.1.0.1")));
+				RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(LibDir, "linux", "x86_64-linux-gnu-5.4", "libndi.so.1.0.1")));
 			}
 			else if (Target.Platform == UnrealTargetPlatform.Mac)
 			{
 				PublicDelayLoadDLLs.Add("libndi.dylib");
-				RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(NdiDir, "apple", "x86", "libndi.dylib")));
+				RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(LibDir, "apple", "x86", "libndi.dylib")));
 			}
 			else if (Target.Platform == UnrealTargetPlatform.Win32)
 			{
 				PublicLibraryPaths.Add(Path.Combine(LibDir, "windows", "x86"));
 				PublicAdditionalLibraries.Add("Processing.NDI.Lib.x86.lib");
 				PublicDelayLoadDLLs.Add("Processing.NDI.Lib.x86.dll");
-				RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(NdiDir, "windows", "x86", "Processing.NDI.Lib.x86.dll")));
+				RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(LibDir, "windows", "x86", "Processing.NDI.Lib.x86.dll")));
 			}
 			else if (Target.Platform == UnrealTargetPlatform.Win64)
 			{
 				PublicLibraryPaths.Add(Path.Combine(LibDir, "windows", "x64"));
 				PublicAdditionalLibraries.Add("Processing.NDI.Lib.x64.lib");
 				PublicDelayLoadDLLs.Add("Processing.NDI.Lib.x64.dll");
-				RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(NdiDir, "windows", "x64", "Processing.NDI.Lib.x64.dll")));
+				RuntimeDependencies.Add(new RuntimeDependency(Path.Combine(LibDir, "windows", "x64", "Processing.NDI.Lib.x64.dll")));
 			}
 			else
 			{
