@@ -85,6 +85,7 @@ bool FNdiMediaPlayer::Tick(float DeltaTime)
 			if (AudioSink != nullptr)
 			{
 				AudioSink->PauseAudioSink();
+				AudioSink->FlushAudioSink();
 			}
 		}
 	}
