@@ -48,6 +48,7 @@ struct NDIlib_v2
 	int (*NDIlib_send_get_no_connections)(NDIlib_send_instance_t p_instance, uint32_t timeout_in_ms);
 	void (*NDIlib_send_clear_connection_metadata)(NDIlib_send_instance_t p_instance);
 	void (*NDIlib_send_add_connection_metadata)(NDIlib_send_instance_t p_instance, const NDIlib_metadata_frame_t* p_metadata);
+	void (*NDIlib_send_set_failover)(NDIlib_send_instance_t p_instance, const NDIlib_source_t* p_failover_source);
 
 	// NDI Recv functions
 	NDIlib_recv_instance_t (*NDIlib_recv_create2)(const NDIlib_recv_create_t* p_create_settings);

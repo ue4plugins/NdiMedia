@@ -112,3 +112,9 @@ void NDIlib_send_clear_connection_metadata(NDIlib_send_instance_t p_instance);
 // this string will be sent to them immediately.
 PROCESSINGNDILIB_API
 void NDIlib_send_add_connection_metadata(NDIlib_send_instance_t p_instance, const NDIlib_metadata_frame_t* p_metadata);
+
+// This will assign a new fail-over source for this video source. What this means is that if this video source was to fail
+// any receivers would automatically switch over to use this source, unless this source then came back online. You can specify
+// NULL to clear the source.
+PROCESSINGNDILIB_API
+void NDIlib_send_set_failover(NDIlib_send_instance_t p_instance, const NDIlib_source_t* p_failover_source);
