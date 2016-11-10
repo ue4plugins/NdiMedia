@@ -188,24 +188,26 @@ bool FNdiMediaPlayer::SupportsSeeking() const
 
 void FNdiMediaPlayer::Close()
 {
-	FScopeLock Lock(&CriticalSection);
-
-	if (ReceiverInstance != nullptr)
 	{
-		NDIlib_recv_destroy(ReceiverInstance);
-		ReceiverInstance = nullptr;
+		FScopeLock Lock(&CriticalSection);
+
+		if (ReceiverInstance != nullptr)
+		{
+			NDIlib_recv_destroy(ReceiverInstance);
+			ReceiverInstance = nullptr;
+		}
+
+		CurrentState = EMediaState::Closed;
+		CurrentUrl.Empty();
+
+		LastAudioChannels = 0;
+		LastAudioSampleRate = 0;
+		LastVideoDimensions = FIntPoint::ZeroValue;
+		LastVideoFrameRate = 0.0f;
+
+		SelectedAudioTrack = INDEX_NONE;
+		SelectedVideoTrack = INDEX_NONE;
 	}
-
-	CurrentState = EMediaState::Closed;
-	CurrentUrl.Empty();
-
-	LastAudioChannels = 0;
-	LastAudioSampleRate = 0;
-	LastVideoDimensions = FIntPoint::ZeroValue;
-	LastVideoFrameRate = 0.0f;
-
-	SelectedAudioTrack = INDEX_NONE;
-	SelectedVideoTrack = INDEX_NONE;
 
 	UpdateAudioSampler();
 
