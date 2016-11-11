@@ -22,6 +22,9 @@ that are not yet available in the UE4 Master branch.
 This plug-in was last built against **Unreal Engine 4.14** and tested on the
 following platforms:
 
+- ~~iOS~~
+- ~~Linux~~
+- ~~macOS~~
 - Windows
 
 
