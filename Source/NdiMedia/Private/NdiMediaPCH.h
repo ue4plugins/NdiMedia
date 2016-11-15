@@ -14,6 +14,7 @@
 #include "Runtime/Core/Public/Modules/ModuleManager.h"
 #include "Runtime/CoreUObject/Public/CoreUObject.h"
 #include "Runtime/Media/Public/IMediaAudioSink.h"
+#include "Runtime/Media/Public/IMediaBinarySink.h"
 #include "Runtime/Media/Public/IMediaOptions.h"
 #include "Runtime/Media/Public/IMediaOverlaySink.h"
 #include "Runtime/Media/Public/IMediaTextureSink.h"

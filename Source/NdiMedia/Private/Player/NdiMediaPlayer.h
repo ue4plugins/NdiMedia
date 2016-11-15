@@ -15,8 +15,7 @@ class FNdiMediaAudioSampler;
  * Implements a media player using the Windows Media Foundation framework.
  */
 class FNdiMediaPlayer
-	: public FTickerObjectBase
-	, public IMediaControls
+	: public IMediaControls
 	, public IMediaPlayer
 	, public IMediaOutput
 	, public IMediaTracks
@@ -28,12 +27,6 @@ public:
 
 	/** Virtual destructor. */
 	virtual ~FNdiMediaPlayer();
-
-public:
-
-	//~ FTickerObjectBase interface
-
-	virtual bool Tick(float DeltaTime) override;
 
 public:
 
@@ -66,6 +59,8 @@ public:
 	virtual FString GetUrl() const override;
 	virtual bool Open(const FString& Url, const IMediaOptions& Options) override;
 	virtual bool Open(const TSharedRef<FArchive, ESPMode::ThreadSafe>& Archive, const FString& OriginalUrl, const IMediaOptions& Options) override;
+	virtual void TickPlayer(float DeltaTime) override;
+	virtual void TickVideo(float DeltaTime) override;
 
 	DECLARE_DERIVED_EVENT(FMfMediaPlayer, IMediaPlayer::FOnMediaEvent, FOnMediaEvent);
 	virtual FOnMediaEvent& OnMediaEvent() override
@@ -78,6 +73,7 @@ public:
 	//~ IMediaOutput interface
 
 	virtual void SetAudioSink(IMediaAudioSink* Sink) override;
+	virtual void SetMetadataSink(IMediaBinarySink* Sink) override;
 	virtual void SetOverlaySink(IMediaOverlaySink* Sink) override;
 	virtual void SetVideoSink(IMediaTextureSink* Sink) override;
 
@@ -98,6 +94,9 @@ public:
 	virtual bool SelectTrack(EMediaTrackType TrackType, int32 TrackIndex) override;
 
 protected:
+
+	/** Capture the latest metdata frame and forward it to the sink. */
+	void CaptureMetadataFrame();
 
 	/** Capture the latest video frame data and forward it to the sink. */
 	void CaptureVideoFrame();
@@ -139,6 +138,9 @@ private:
 	/** The currently used audio sink. */
 	IMediaAudioSink* AudioSink;
 
+	/** The currently used metadata sink. */
+	IMediaBinarySink* MetadataSink;
+
 	/** The currently used video sink. */
 	IMediaTextureSink* VideoSink;
 
@@ -146,6 +148,9 @@ private:
 
 	/** Index of the selected audio track. */
 	int32 SelectedAudioTrack;
+
+	/** Index of the selected metadata track. */
+	int32 SelectedMetadataTrack;
 
 	/** Index of the selected video track. */
 	int32 SelectedVideoTrack;
@@ -170,8 +175,11 @@ private:
 	/** Audio sample rate in the last received sample. */
 	int32 LastAudioSampleRate;
 
+	/** Buffer dimensions in the last received sample. */
+	FIntPoint LastBufferDim;
+
 	/** Video dimensions in the last received sample. */
-	FIntPoint LastVideoDimensions;
+	FIntPoint LastVideoDim;
 
 	/** Video frame rate in the last received sample. */
 	float LastVideoFrameRate;
