@@ -386,9 +386,7 @@ void FNdiMediaPlayer::TickPlayer(float DeltaTime)
 	}
 
 	// update player state
-	EMediaState State = NDIlib_recv_is_connected(ReceiverInstance)
-		? (Paused ? EMediaState::Paused : EMediaState::Playing)
-		: EMediaState::Preparing;
+	EMediaState State = Paused ? EMediaState::Paused : (NDIlib_recv_is_connected(ReceiverInstance) ? EMediaState::Playing : EMediaState::Preparing);
 
 	if ((State != CurrentState) && (AudioSink != nullptr))
 	{
