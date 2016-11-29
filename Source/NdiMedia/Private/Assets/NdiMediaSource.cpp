@@ -3,7 +3,7 @@
 #include "NdiMediaSource.h"
 #include "NdiMediaPrivate.h"
 
-#include "Networking.h"
+#include "Interfaces/IPv4/IPv4Endpoint.h"
 
 
 static FName AudioChannelsName("AudioChannels");
