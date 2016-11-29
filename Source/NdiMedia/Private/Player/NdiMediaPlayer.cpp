@@ -1,8 +1,15 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
-#include "NdiMediaPCH.h"
-#include "NdiMediaAudioSampler.h"
 #include "NdiMediaPlayer.h"
+#include "NdiMediaPrivate.h"
+
+#include "IMediaAudioSink.h"
+#include "IMediaBinarySink.h"
+#include "IMediaOptions.h"
+#include "IMediaTextureSink.h"
+#include "NdiMediaAudioSampler.h"
+#include "NdiMediaSettings.h"
+
 #include "NdiMediaAllowPlatformTypes.h"
 
 

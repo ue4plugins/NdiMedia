@@ -1,9 +1,11 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
-#include "NdiMediaEditorPCH.h"
 #include "ModuleInterface.h"
+#include "NdiMediaFinder.h"
 #include "NdiMediaFinderCustomization.h"
+#include "NdiMediaSource.h"
 #include "NdiMediaSourceCustomization.h"
+#include "PropertyEditorModule.h"
 
 
 /**

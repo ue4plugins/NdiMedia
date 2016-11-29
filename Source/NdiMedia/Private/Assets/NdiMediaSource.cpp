@@ -1,7 +1,9 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
-#include "NdiMediaPCH.h"
 #include "NdiMediaSource.h"
+#include "NdiMediaPrivate.h"
+
+#include "Networking.h"
 
 
 static FName AudioChannelsName("AudioChannels");

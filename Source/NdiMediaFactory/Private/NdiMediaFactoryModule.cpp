@@ -1,8 +1,12 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
-#include "NdiMediaFactoryPCH.h"
 #include "IMediaPlayerFactory.h"
+#include "IMediaModule.h"
+#include "INdiMediaModule.h"
+#include "ISettingsModule.h"
+#include "ISettingsSection.h"
 #include "ModuleInterface.h"
+#include "ModuleManager.h"
 #include "NdiMediaSettings.h"
 
 

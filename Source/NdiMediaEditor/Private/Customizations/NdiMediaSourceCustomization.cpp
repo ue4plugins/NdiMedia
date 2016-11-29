@@ -1,7 +1,13 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
-#include "NdiMediaEditorPCH.h"
 #include "NdiMediaSourceCustomization.h"
+
+#include "DetailCategoryBuilder.h"
+#include "DetailLayoutBuilder.h"
+#include "DetailWidgetRow.h"
+#include "IDetailPropertyRow.h"
+#include "NdiMediaFinder.h"
+#include "NdiMediaSource.h"
 
 
 #define LOCTEXT_NAMESPACE "FNdiMediaSourceCustomization"

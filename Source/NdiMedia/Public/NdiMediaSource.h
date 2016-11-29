@@ -2,7 +2,11 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
+#include "UObject/ObjectMacros.h"
+#include "UObject/Object.h"
 #include "MediaSource.h"
+
 #include "NdiMediaSource.generated.h"
 
 

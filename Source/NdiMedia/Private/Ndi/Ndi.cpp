@@ -1,7 +1,8 @@
 // Copyright 2015 Headcrash Industries LLC. All Rights Reserved.
 
-#include "NdiMediaPCH.h"
 #include "Ndi.h"
+#include "NdiMediaPrivate.h"
+#include "IPluginManager.h"
 
 
 /* Static initialization

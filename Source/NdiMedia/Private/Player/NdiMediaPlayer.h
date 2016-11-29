@@ -9,6 +9,8 @@
 
 
 class FNdiMediaAudioSampler;
+struct NDIlib_audio_frame_t;
+struct NDIlib_video_frame_t;
 
 
 /**

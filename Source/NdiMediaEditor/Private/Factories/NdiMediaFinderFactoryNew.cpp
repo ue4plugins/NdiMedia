@@ -1,7 +1,9 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
-#include "NdiMediaEditorPCH.h"
 #include "NdiMediaFinderFactoryNew.h"
+
+#include "AssetTypeCategories.h"
+#include "NdiMediaFinder.h"
 
 
 /* UNdiMediaFinderFactoryNew structors

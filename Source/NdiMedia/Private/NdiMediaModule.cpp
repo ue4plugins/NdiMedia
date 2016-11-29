@@ -1,7 +1,8 @@
 // Copyright 2015 Headcrash Industries LLC. All Rights Reserved.
 
-#include "NdiMediaPCH.h"
 #include "INdiMediaModule.h"
+#include "NdiMediaPrivate.h"
+
 #include "Ndi.h"
 #include "NdiMediaFinder.h"
 #include "NdiMediaPlayer.h"
