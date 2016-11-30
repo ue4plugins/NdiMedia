@@ -5,9 +5,11 @@
 #include "DetailCategoryBuilder.h"
 #include "DetailLayoutBuilder.h"
 #include "DetailWidgetRow.h"
+#include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "IDetailPropertyRow.h"
 #include "NdiMediaFinder.h"
 #include "NdiMediaSource.h"
+#include "Widgets/Input/SComboButton.h"
 
 
 #define LOCTEXT_NAMESPACE "FNdiMediaSourceCustomization"

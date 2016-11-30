@@ -7,13 +7,17 @@
 #include "IMediaBinarySink.h"
 #include "IMediaOptions.h"
 #include "IMediaTextureSink.h"
+#include "Misc/ScopeLock.h"
 #include "NdiMediaAudioSampler.h"
 #include "NdiMediaSettings.h"
+#include "UObject/Class.h"
+#include "UObject/UObjectGlobals.h"
+#include "UObject/WeakObjectPtr.h"
 
 #include "NdiMediaAllowPlatformTypes.h"
 
 
-#define LOCTEXT_NAMESPACE "FNdiMediaTracks"
+#define LOCTEXT_NAMESPACE "FNdiMediaPlayer"
 
 
 /* FNdiVideoPlayer structors

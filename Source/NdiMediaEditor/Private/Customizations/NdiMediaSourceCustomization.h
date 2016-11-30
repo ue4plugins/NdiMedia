@@ -2,10 +2,12 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include "IDetailCustomization.h"
 
 
 class IPropertyHandle;
+class SWidget;
 
 
 /**

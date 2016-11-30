@@ -3,6 +3,9 @@
 #include "NdiMediaAudioSampler.h"
 #include "NdiMediaPrivate.h"
 
+#include "HAL/RunnableThread.h"
+#include "Misc/ScopeLock.h"
+
 
 /* FNdiMediaAudioSampler structors
  *****************************************************************************/

@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include "IMediaControls.h"
 #include "IMediaPlayer.h"
 #include "IMediaOutput.h"

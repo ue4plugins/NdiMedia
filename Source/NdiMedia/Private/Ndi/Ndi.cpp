@@ -2,7 +2,10 @@
 
 #include "Ndi.h"
 #include "NdiMediaPrivate.h"
+
 #include "IPluginManager.h"
+#include "HAL/PlatformProcess.h"
+#include "Misc/Paths.h"
 
 
 /* Static initialization

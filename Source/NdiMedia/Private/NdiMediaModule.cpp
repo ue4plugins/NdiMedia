@@ -3,6 +3,7 @@
 #include "INdiMediaModule.h"
 #include "NdiMediaPrivate.h"
 
+#include "ModuleManager.h"
 #include "Ndi.h"
 #include "NdiMediaFinder.h"
 #include "NdiMediaPlayer.h"

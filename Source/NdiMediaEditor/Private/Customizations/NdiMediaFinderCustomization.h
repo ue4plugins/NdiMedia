@@ -2,11 +2,16 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include "IDetailCustomization.h"
 #include "TickableEditorObject.h"
+#include "UObject/WeakObjectPtr.h"
 
 
+class IDetailLayoutBuilder;
 class IPropertyHandle;
+class SEditableTextBox;
+class SWidget;
 class UNdiMediaFinder;
 
 

@@ -1,5 +1,6 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
+#include "CoreMinimal.h"
 #include "IMediaPlayerFactory.h"
 #include "IMediaModule.h"
 #include "INdiMediaModule.h"
@@ -8,6 +9,9 @@
 #include "ModuleInterface.h"
 #include "ModuleManager.h"
 #include "NdiMediaSettings.h"
+#include "UObject/Class.h"
+#include "UObject/UObjectGlobals.h"
+#include "UObject/WeakObjectPtr.h"
 
 
 #define LOCTEXT_NAMESPACE "FNdiMediaFactoryModule"

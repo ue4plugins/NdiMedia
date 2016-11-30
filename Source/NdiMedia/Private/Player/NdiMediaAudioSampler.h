@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "Runnable.h"
+#include "CoreMinimal.h"
+#include "HAL/Runnable.h"
 
 
 struct NDIlib_audio_frame_t;
