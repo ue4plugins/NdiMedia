@@ -16,6 +16,9 @@ static FName VideoHeightName("VideoHeight");
 static FName VideoWidthName("VideoWidth");
 
 
+/* UNdiMediaSource structors
+ *****************************************************************************/
+
 UNdiMediaSource::UNdiMediaSource()
 	: Bandwidth(ENdiMediaBandwidth::Highest)
 	, PreferredNumAudioChannels(2)
@@ -27,6 +30,9 @@ UNdiMediaSource::UNdiMediaSource()
 	, PreferredFrameFormat(ENdiMediaFrameFormatPreference::NoPreference)
 { }
 
+
+/* IMediaOptions interface
+ *****************************************************************************/
 
 FString UNdiMediaSource::GetMediaOption(const FName& Key, const FString& DefaultValue) const
 {
@@ -43,7 +49,7 @@ FString UNdiMediaSource::GetMediaOption(const FName& Key, const FString& Default
 		}
 	}
 
-	return DefaultValue;
+	return Super::GetMediaOption(Key, DefaultValue);
 }
 
 
@@ -94,9 +100,30 @@ int64 UNdiMediaSource::GetMediaOption(const FName& Key, int64 DefaultValue) cons
 		return PreferredFrameRateNumerator;
 	}
 
-	return DefaultValue;
+	return Super::GetMediaOption(Key, DefaultValue);
 }
 
+
+bool UNdiMediaSource::HasMediaOption(const FName& Key) const
+{
+	if ((Key == AudioChannelsName) ||
+		(Key == AudioSampleRateName) ||
+		(Key == BandwidthName) ||
+		(Key == FrameRateDenominatorName) ||
+		(Key == FrameRateNumeratorName) ||
+		(Key == ProgressiveName) ||
+		(Key == VideoHeightName) ||
+		(Key == VideoWidthName))
+	{
+		return true;
+	}
+
+	return Super::HasMediaOption(Key);
+}
+
+
+/* UMediaSource interface
+ *****************************************************************************/
 
 FString UNdiMediaSource::GetUrl() const
 {

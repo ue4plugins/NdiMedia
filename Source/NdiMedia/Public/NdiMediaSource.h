@@ -51,7 +51,7 @@ class UNdiMediaSource
 public:
 
 	/** Default constructor. */
-	UNdiMediaSource();
+	NDIMEDIA_API UNdiMediaSource();
 
 public:
 
@@ -97,6 +97,7 @@ public:
 
 	virtual FString GetMediaOption(const FName& Key, const FString& DefaultValue) const override;
 	virtual int64 GetMediaOption(const FName& Key, int64 DefaultValue) const override;
+	virtual bool HasMediaOption(const FName& Key) const override;
 
 public:
 
