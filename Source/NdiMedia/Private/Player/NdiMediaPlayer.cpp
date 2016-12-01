@@ -259,7 +259,7 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 	const TCHAR* SourceUrl = &Url[6];
 
 	// create receiver
-	int64 Bandwidth = Options.GetMediaOption("Bandwidth", (int64)NDIlib_recv_bandwidth_highest);
+	int64 Bandwidth = Options.GetMediaOption(NdiMedia::BandwidthOption, (int64)NDIlib_recv_bandwidth_highest);
 
 	NDIlib_source_t Source;
 	{
@@ -303,49 +303,49 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 	FString AudioFormatString;
 	FString VideoFormatString;
 
-	const int64 AudioChannels = Options.GetMediaOption("AudioChannels", (int64)0);
+	const int64 AudioChannels = Options.GetMediaOption(NdiMedia::AudioChannelsOption, (int64)0);
 	
 	if (AudioChannels > 0)
 	{
 		AudioFormatString += FString::Printf(TEXT(" no_channels=\"%i\""), AudioChannels);
 	}
 
-	const int64 AudioSampleRate = Options.GetMediaOption("AudioSampleRate", (int64)0);
+	const int64 AudioSampleRate = Options.GetMediaOption(NdiMedia::AudioSampleRateOption, (int64)0);
 
 	if (AudioSampleRate > 0)
 	{
 		AudioFormatString += FString::Printf(TEXT(" sample_rate=\"%i\""), AudioSampleRate);
 	}
 
-	const int64 FrameRateD = Options.GetMediaOption("FrameRateD", (int64)0);
+	const int64 FrameRateD = Options.GetMediaOption(NdiMedia::FrameRateDOption, (int64)0);
 
 	if (FrameRateD > 0)
 	{
 		VideoFormatString += FString::Printf(TEXT(" frame_rate_d=\"%i\""), FrameRateD);
 	}
 
-	const int64 FrameRateN = Options.GetMediaOption("FrameRateD", (int64)0);
+	const int64 FrameRateN = Options.GetMediaOption(NdiMedia::FrameRateDOption, (int64)0);
 
 	if (FrameRateN > 0)
 	{
 		VideoFormatString += FString::Printf(TEXT(" frame_rate_n=\"%i\""), FrameRateN);
 	}
 
-	const FString Progressive = Options.GetMediaOption("Progressive", FString());
+	const FString Progressive = Options.GetMediaOption(NdiMedia::ProgressiveOption, FString());
 
 	if (!Progressive.IsEmpty())
 	{
 		VideoFormatString += FString::Printf(TEXT(" progressive=\"%s\""), *Progressive);
 	}
 
-	const int64 VideoHeight = Options.GetMediaOption("VideoHeight", (int64)0);
+	const int64 VideoHeight = Options.GetMediaOption(NdiMedia::VideoHeightOption, (int64)0);
 
 	if (VideoHeight > 0)
 	{
 		VideoFormatString += FString::Printf(TEXT(" yres=\"%i\""), VideoHeight);
 	}
 
-	const int64 VideoWidth = Options.GetMediaOption("VideoWidth", (int64)0);
+	const int64 VideoWidth = Options.GetMediaOption(NdiMedia::VideoWidthOption, (int64)0);
 
 	if (VideoWidth > 0)
 	{

@@ -42,7 +42,7 @@ enum class ENdiMediaFrameFormatPreference : uint8
 /**
  * Media source for NDI streams.
  */
-UCLASS(BlueprintType, MinimalAPI, hidecategories=(Overrides, Playback))
+UCLASS(BlueprintType, MinimalApi, hidecategories=(Overrides, Playback))
 class UNdiMediaSource
 	: public UMediaSource
 {
@@ -51,7 +51,7 @@ class UNdiMediaSource
 public:
 
 	/** Default constructor. */
-	NDIMEDIA_API UNdiMediaSource();
+	UNdiMediaSource();
 
 public:
 

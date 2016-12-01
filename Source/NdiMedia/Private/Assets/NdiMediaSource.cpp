@@ -6,16 +6,6 @@
 #include "Interfaces/IPv4/IPv4Endpoint.h"
 
 
-static FName AudioChannelsName("AudioChannels");
-static FName AudioSampleRateName("AudioSampleRate");
-static FName BandwidthName("Bandwidth");
-static FName FrameRateDenominatorName("FrameRateD");
-static FName FrameRateNumeratorName("FrameRateN");
-static FName ProgressiveName("Progressive");
-static FName VideoHeightName("VideoHeight");
-static FName VideoWidthName("VideoWidth");
-
-
 /* UNdiMediaSource structors
  *****************************************************************************/
 
@@ -36,7 +26,7 @@ UNdiMediaSource::UNdiMediaSource()
 
 FString UNdiMediaSource::GetMediaOption(const FName& Key, const FString& DefaultValue) const
 {
-	if (Key == ProgressiveName)
+	if (Key == NdiMedia::ProgressiveOption)
 	{
 		if (PreferredFrameFormat == ENdiMediaFrameFormatPreference::Fielded)
 		{
@@ -55,17 +45,17 @@ FString UNdiMediaSource::GetMediaOption(const FName& Key, const FString& Default
 
 int64 UNdiMediaSource::GetMediaOption(const FName& Key, int64 DefaultValue) const
 {
-	if (Key == AudioChannelsName)
+	if (Key == NdiMedia::AudioChannelsOption)
 	{
 		return PreferredNumAudioChannels;
 	}
 
-	if (Key == AudioSampleRateName)
+	if (Key == NdiMedia::AudioSampleRateOption)
 	{
 		return PreferredAudioSampleRate;
 	}
 
-	if (Key == BandwidthName)
+	if (Key == NdiMedia::BandwidthOption)
 	{
 		switch (Bandwidth)
 		{
@@ -80,22 +70,22 @@ int64 UNdiMediaSource::GetMediaOption(const FName& Key, int64 DefaultValue) cons
 		}
 	}
 
-	if (Key == VideoHeightName)
+	if (Key == NdiMedia::VideoHeightOption)
 	{
 		return PreferredVideoHeight;
 	}
 
-	if (Key == VideoWidthName)
+	if (Key == NdiMedia::VideoWidthOption)
 	{
 		return PreferredVideoWidth;
 	}
 
-	if (Key == FrameRateDenominatorName)
+	if (Key == NdiMedia::FrameRateDOption)
 	{
 		return PreferredFrameRateDenominator;
 	}
 
-	if (Key == FrameRateNumeratorName)
+	if (Key == NdiMedia::FrameRateNOption)
 	{
 		return PreferredFrameRateNumerator;
 	}
@@ -106,14 +96,14 @@ int64 UNdiMediaSource::GetMediaOption(const FName& Key, int64 DefaultValue) cons
 
 bool UNdiMediaSource::HasMediaOption(const FName& Key) const
 {
-	if ((Key == AudioChannelsName) ||
-		(Key == AudioSampleRateName) ||
-		(Key == BandwidthName) ||
-		(Key == FrameRateDenominatorName) ||
-		(Key == FrameRateNumeratorName) ||
-		(Key == ProgressiveName) ||
-		(Key == VideoHeightName) ||
-		(Key == VideoWidthName))
+	if ((Key == NdiMedia::AudioChannelsOption) ||
+		(Key == NdiMedia::AudioSampleRateOption) ||
+		(Key == NdiMedia::BandwidthOption) ||
+		(Key == NdiMedia::FrameRateDOption) ||
+		(Key == NdiMedia::FrameRateNOption) ||
+		(Key == NdiMedia::ProgressiveOption) ||
+		(Key == NdiMedia::VideoHeightOption) ||
+		(Key == NdiMedia::VideoWidthOption))
 	{
 		return true;
 	}

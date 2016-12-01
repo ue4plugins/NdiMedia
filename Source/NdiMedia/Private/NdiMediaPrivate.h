@@ -15,3 +15,31 @@
 
 
 DECLARE_LOG_CATEGORY_EXTERN(LogNdiMedia, Log, All);
+
+
+namespace NdiMedia
+{
+	/** Name of the AudioChannels media option. */
+	static FName AudioChannelsOption("AudioChannels");
+
+	/** Name of the AudioSampleRate media option. */
+	static FName AudioSampleRateOption("AudioSampleRate");
+
+	/** Name of the Bandwidth media option. */
+	static FName BandwidthOption("Bandwidth");
+
+	/** Name of the FrameRateDenominator media option. */
+	static FName FrameRateDOption("FrameRateD");
+
+	/** Name of the FrameRateNumerator media option. */
+	static FName FrameRateNOption("FrameRateN");
+
+	/** Name of the Progressive media option. */
+	static FName ProgressiveOption("Progressive");
+
+	/** Name of the VideoHeight media option. */
+	static FName VideoHeightOption("VideoHeight");
+
+	/** Name of the VideoWidth media option. */
+	static FName VideoWidthOption("VideoWidth");
+}
