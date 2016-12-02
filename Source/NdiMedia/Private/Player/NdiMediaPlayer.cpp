@@ -3,6 +3,7 @@
 #include "NdiMediaPlayer.h"
 #include "NdiMediaPrivate.h"
 
+#include "HAL/PlatformProcess.h"
 #include "IMediaAudioSink.h"
 #include "IMediaBinarySink.h"
 #include "IMediaOptions.h"
@@ -256,15 +257,28 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 		return false;
 	}
 
-	const TCHAR* SourceName = &Url[6];
+	FString SourceStr = Url.RightChop(6);
 
 	// create receiver
 	int64 Bandwidth = Options.GetMediaOption(NdiMedia::BandwidthOption, (int64)NDIlib_recv_bandwidth_highest);
 
 	NDIlib_source_t Source;
 	{
-		Source.p_ip_address = nullptr;
-		Source.p_ndi_name = TCHAR_TO_ANSI(SourceName);
+		if (SourceStr.Find(TEXT(":")) != INDEX_NONE)
+		{
+			Source.p_ip_address = TCHAR_TO_ANSI(*SourceStr);
+			Source.p_ndi_name = nullptr;
+		}
+		else
+		{
+			if (SourceStr.StartsWith(TEXT("localhost ")))
+			{
+				SourceStr.ReplaceInline(TEXT("localhost"), FPlatformProcess::ComputerName());
+			}
+
+			Source.p_ip_address = nullptr;
+			Source.p_ndi_name = TCHAR_TO_ANSI(*SourceStr);
+		}
 	}
 
 	NDIlib_recv_create_t RcvCreateDesc;
@@ -281,7 +295,7 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 
 	if (ReceiverInstance == nullptr)
 	{
-		UE_LOG(LogNdiMedia, Error, TEXT("Failed to open NDI media source %s: couldn't create receiver"), SourceName);
+		UE_LOG(LogNdiMedia, Error, TEXT("Failed to open NDI media source %s: couldn't create receiver"), *SourceStr);
 
 		return false;
 	}

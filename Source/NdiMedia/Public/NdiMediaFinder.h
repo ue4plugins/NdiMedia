@@ -26,25 +26,19 @@ struct FNdiMediaSourceId
 	 *
 	 * @param InEndpoint The NDI source's IP endpoint.
 	 * @param InName The NDI source's name.
-	 * @param InUrl The NDI source's URL.
 	 */
-	FNdiMediaSourceId(const FString& InEndpoint, const FString& InName, const FString& InUrl)
+	FNdiMediaSourceId(const FString& InEndpoint, const FString& InName)
 		: Endpoint(InEndpoint)
 		, Name(InName)
-		, Url(InUrl)
 	{ }
 
 	/** The IP endpoint of the NDI media source, i.e. "1.2.3.4:12345". */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=NDI)
 	FString Endpoint;
 
-	/** The name of the NDI media source, i.e. "My NDI Stream". */
+	/** The name of the NDI media source, i.e. "NDI_SOURCE_NAME". */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=NDI)
 	FString Name;
-
-	/** The MediaPlayer compatible URL, i.e. "ndi://1.2.3.4:12345". */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=NDI)
-	FString Url;
 
 public:
 

@@ -59,7 +59,22 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
 	ENdiMediaBandwidth Bandwidth;
 
-	/** The name of the NDI source to be played. */
+	/**
+	 * The IP address and port number of the NDI source to be played, i.e "1.2.3.4:5678".
+	 *
+	 * If you leave this empty, then the SourceName setting is used instead.
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AssetRegistrySearchable)
+	FString SourceEndpoint;
+
+	/**
+	 * The name of the NDI source to be played, i.e. "MACHINE_NAME (NDI_SOURCE_NAME)".
+	 *
+	 * If you leave this empty, then the SourceEndpoint setting is used instead.
+	 * The connection is faster if the IP address and port number is known, but
+	 * some servers may use dynamic port numbers, so the source has to be looked
+	 * up via this name instead.
+	 */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AssetRegistrySearchable)
 	FString SourceName;
 

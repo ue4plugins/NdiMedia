@@ -34,10 +34,19 @@ public:
 
 private:
 
+	enum class EProperty
+	{
+		SourceEndpoint,
+		SourceName
+	};
+
 	/** Callback for generating the menu content of the SourceName combo box. */
-	TSharedRef<SWidget> HandleSourceNameComboButtonMenuContent() const;
+	TSharedRef<SWidget> HandleSourceComboButtonMenuContent(EProperty Property) const;
 
 private:
+
+	/** Pointer to the SourceEndpoint property handle. */
+	TSharedPtr<IPropertyHandle> SourceEndpointProperty;
 
 	/** Pointer to the SourceName property handle. */
 	TSharedPtr<IPropertyHandle> SourceNameProperty;
