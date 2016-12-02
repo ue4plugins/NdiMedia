@@ -117,13 +117,11 @@ bool UNdiMediaSource::HasMediaOption(const FName& Key) const
 
 FString UNdiMediaSource::GetUrl() const
 {
-	return FString(TEXT("ndi://")) + SourceEndpoint;
+	return FString(TEXT("ndi://")) + SourceName;
 }
 
 
 bool UNdiMediaSource::Validate() const
 {
-	FIPv4Endpoint Endpoint;
-
-	return FIPv4Endpoint::Parse(SourceEndpoint, Endpoint);
+	return !SourceName.IsEmpty();
 }

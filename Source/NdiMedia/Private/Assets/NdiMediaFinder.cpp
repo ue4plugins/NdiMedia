@@ -74,7 +74,7 @@ bool UNdiMediaFinder::GetSources(TArray<FNdiMediaSourceId>& OutSources) const
 		OutSources.Add(FNdiMediaSourceId(
 			ANSI_TO_TCHAR(Source.p_ip_address),
 			ANSI_TO_TCHAR(Source.p_ndi_name),
-			FString(TEXT("ndi://")) + ANSI_TO_TCHAR(Source.p_ip_address)
+			FString(TEXT("ndi://")) + ANSI_TO_TCHAR(Source.p_ndi_name)
 		));
 	}
 

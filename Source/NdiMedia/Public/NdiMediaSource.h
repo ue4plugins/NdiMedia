@@ -59,9 +59,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
 	ENdiMediaBandwidth Bandwidth;
 
-	/** The IP address and port number (e.g. "1.2.3.4:5678") of the NDI source to be played. */
+	/** The name of the NDI source to be played. */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AssetRegistrySearchable)
-	FString SourceEndpoint;
+	FString SourceName;
 
 	/** Preferred number of audio channels (0 = no preference, default = 2). */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)

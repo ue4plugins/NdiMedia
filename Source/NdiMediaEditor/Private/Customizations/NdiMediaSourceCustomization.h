@@ -34,11 +34,11 @@ public:
 
 private:
 
-	/** Callback for generating the menu content of the EnSourcedpoint combo box. */
-	TSharedRef<SWidget> HandleSourceEndpointComboButtonMenuContent() const;
+	/** Callback for generating the menu content of the SourceName combo box. */
+	TSharedRef<SWidget> HandleSourceNameComboButtonMenuContent() const;
 
 private:
 
-	/** Pointer to the SourceEndpoint property handle. */
-	TSharedPtr<IPropertyHandle> SourceEndpointProperty;
+	/** Pointer to the SourceName property handle. */
+	TSharedPtr<IPropertyHandle> SourceNameProperty;
 };

@@ -24,14 +24,14 @@ void FNdiMediaSourceCustomization::CustomizeDetails(IDetailLayoutBuilder& Detail
 	IDetailCategoryBuilder& NdiCategory = DetailBuilder.EditCategory("NDI");
 	{
 		// FilePath
-		SourceEndpointProperty = DetailBuilder.GetProperty(GET_MEMBER_NAME_CHECKED(UNdiMediaSource, SourceEndpoint));
+		SourceNameProperty = DetailBuilder.GetProperty(GET_MEMBER_NAME_CHECKED(UNdiMediaSource, SourceName));
 		{
-			IDetailPropertyRow& SourceEndpointRow = NdiCategory.AddProperty(SourceEndpointProperty);
+			IDetailPropertyRow& SourceNameRow = NdiCategory.AddProperty(SourceNameProperty);
 
-			SourceEndpointRow.CustomWidget()
+			SourceNameRow.CustomWidget()
 				.NameContent()
 				[
-					SourceEndpointProperty->CreatePropertyNameWidget()
+					SourceNameProperty->CreatePropertyNameWidget()
 				]
 				.ValueContent()
 				.MaxDesiredWidth(0.0f)
@@ -41,14 +41,14 @@ void FNdiMediaSourceCustomization::CustomizeDetails(IDetailLayoutBuilder& Detail
 					+ SHorizontalBox::Slot()
 						.FillWidth(1.0f)
 						[
-							SourceEndpointProperty->CreatePropertyValueWidget(false)
+							SourceNameProperty->CreatePropertyValueWidget(false)
 						]
 
 					+ SHorizontalBox::Slot()
 						.AutoWidth()
 						[
 							SNew(SComboButton)
-								.OnGetMenuContent(this, &FNdiMediaSourceCustomization::HandleSourceEndpointComboButtonMenuContent)
+								.OnGetMenuContent(this, &FNdiMediaSourceCustomization::HandleSourceNameComboButtonMenuContent)
 								.ContentPadding(FMargin(4.0, 2.0))
 						]
 				];
@@ -60,7 +60,7 @@ void FNdiMediaSourceCustomization::CustomizeDetails(IDetailLayoutBuilder& Detail
 /* FNdiMediaSourceCustomization callbacks
  *****************************************************************************/
 
-TSharedRef<SWidget> FNdiMediaSourceCustomization::HandleSourceEndpointComboButtonMenuContent() const
+TSharedRef<SWidget> FNdiMediaSourceCustomization::HandleSourceNameComboButtonMenuContent() const
 {
 	// get default NDI source finder object
 	auto DefaultFinder = GetDefault<UNdiMediaFinder>();
@@ -83,18 +83,18 @@ TSharedRef<SWidget> FNdiMediaSourceCustomization::HandleSourceEndpointComboButto
 
 	for (auto Source : OutSources)
 	{
-		const FString Endpoint = Source.Endpoint;
+		const FString Name = Source.Name;
 
 		MenuBuilder.AddMenuEntry(
 			FText::FromString(Source.ToString()),
 			FText::FromString(Source.Url),
 			FSlateIcon(),
 			FUIAction(
-				FExecuteAction::CreateLambda([=] { SourceEndpointProperty->SetValue(Endpoint); }),
+				FExecuteAction::CreateLambda([=] { SourceNameProperty->SetValue(Name); }),
 				FCanExecuteAction(),
 				FIsActionChecked::CreateLambda([=]{
 					FString CurrentValue;
-					return ((SourceEndpointProperty->GetValue(CurrentValue) == FPropertyAccess::Success) && CurrentValue == Endpoint);
+					return ((SourceNameProperty->GetValue(CurrentValue) == FPropertyAccess::Success) && CurrentValue == Name);
 				})
 			),
 			NAME_None,

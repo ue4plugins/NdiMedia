@@ -256,15 +256,15 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 		return false;
 	}
 
-	const TCHAR* SourceUrl = &Url[6];
+	const TCHAR* SourceName = &Url[6];
 
 	// create receiver
 	int64 Bandwidth = Options.GetMediaOption(NdiMedia::BandwidthOption, (int64)NDIlib_recv_bandwidth_highest);
 
 	NDIlib_source_t Source;
 	{
-		Source.p_ip_address = TCHAR_TO_ANSI(SourceUrl);
-		Source.p_ndi_name = nullptr;
+		Source.p_ip_address = nullptr;
+		Source.p_ndi_name = TCHAR_TO_ANSI(SourceName);
 	}
 
 	NDIlib_recv_create_t RcvCreateDesc;
@@ -281,7 +281,7 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 
 	if (ReceiverInstance == nullptr)
 	{
-		UE_LOG(LogNdiMedia, Error, TEXT("Failed to open NDI media source %s: couldn't create receiver"), SourceUrl);
+		UE_LOG(LogNdiMedia, Error, TEXT("Failed to open NDI media source %s: couldn't create receiver"), SourceName);
 
 		return false;
 	}
