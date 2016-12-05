@@ -719,8 +719,6 @@ void FNdiMediaPlayer::CaptureMetadataFrame()
 
 void FNdiMediaPlayer::CaptureVideoFrame()
 {
-	check(IsInRenderingThread());
-
 	NDIlib_video_frame_t VideoFrame;
 	NDIlib_frame_type_e FrameType = NDIlib_recv_capture(ReceiverInstance, &VideoFrame, nullptr, nullptr, 0);
 
