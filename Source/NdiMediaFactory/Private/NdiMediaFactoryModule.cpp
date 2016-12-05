@@ -4,14 +4,17 @@
 #include "IMediaPlayerFactory.h"
 #include "IMediaModule.h"
 #include "INdiMediaModule.h"
-#include "ISettingsModule.h"
-#include "ISettingsSection.h"
 #include "ModuleInterface.h"
 #include "ModuleManager.h"
-#include "NdiMediaSettings.h"
 #include "UObject/Class.h"
 #include "UObject/UObjectGlobals.h"
 #include "UObject/WeakObjectPtr.h"
+
+#if WITH_EDITOR
+	#include "ISettingsModule.h"
+	#include "ISettingsSection.h"
+	#include "NdiMediaSettings.h"
+#endif
 
 
 #define LOCTEXT_NAMESPACE "FNdiMediaFactoryModule"
@@ -144,11 +147,15 @@ public:
 
 private:
 
+#if WITH_EDITOR
+
 	/** Callback for when the settings were saved. */
 	bool HandleSettingsSaved()
 	{
 		return true;
 	}
+
+#endif //WITH_EDITOR
 
 private:
 
