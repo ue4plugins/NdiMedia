@@ -11,6 +11,7 @@
 #include "Misc/ScopeLock.h"
 #include "NdiMediaAudioSampler.h"
 #include "NdiMediaSettings.h"
+#include "NdiMediaSource.h"
 #include "UObject/Class.h"
 #include "UObject/UObjectGlobals.h"
 #include "UObject/WeakObjectPtr.h"
@@ -40,6 +41,8 @@ FNdiMediaPlayer::FNdiMediaPlayer()
 	, LastVideoFrameRate(0.0f)
 	, Paused(false)
 	, ReceiverInstance(nullptr)
+	, VideoColorSpace(EMediaTextureSinkColorSpace::Srgb)
+	, VideoSinkFormat(EMediaTextureSinkFormat::CharUYVY)
 {
 	AudioSampler->OnSamples().BindRaw(this, &FNdiMediaPlayer::HandleAudioSamplerSample);
 }
@@ -259,6 +262,36 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 
 	FString SourceStr = Url.RightChop(6);
 
+	// determine sink color space
+	int64 ColorSpace = Options.GetMediaOption(NdiMedia::ColorSpaceOption, (int64)EMediaTextureSinkColorSpace::Srgb);
+
+	if (ColorSpace > (int64)EMediaTextureSinkColorSpace::Srgb)
+	{
+		UE_LOG(LogNdiMedia, Warning, TEXT("Unsupported ColorSpace option in media source %s. Falling back to sRGB."), *SourceStr);
+		ColorSpace = (int64)EMediaTextureSinkColorSpace::Srgb;
+	}
+
+	VideoColorSpace = (EMediaTextureSinkColorSpace)ColorSpace;
+
+	// determine sink format
+	auto ColorFormat = (NDIlib_recv_color_format_e)Options.GetMediaOption(NdiMedia::ColorFormatOption, 0LL);
+
+	if (ColorFormat == NDIlib_recv_color_format_e_BGRX_BGRA)
+	{
+		VideoSinkFormat = EMediaTextureSinkFormat::CharBGRA;
+	}
+	else if (ColorFormat == NDIlib_recv_color_format_e_UYVY_BGRA)
+	{
+		VideoSinkFormat = EMediaTextureSinkFormat::CharUYVY;
+	}
+	else
+	{
+		UE_LOG(LogNdiMedia, Warning, TEXT("Unsupported ColorFormat option in media source %s. Falling back to UYVY."), *SourceStr);
+
+		ColorFormat = NDIlib_recv_color_format_e_UYVY_BGRA;
+		VideoSinkFormat = EMediaTextureSinkFormat::CharUYVY;
+	}
+
 	// create receiver
 	int64 Bandwidth = Options.GetMediaOption(NdiMedia::BandwidthOption, (int64)NDIlib_recv_bandwidth_highest);
 
@@ -284,7 +317,7 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 	NDIlib_recv_create_t RcvCreateDesc;
 	{
 		RcvCreateDesc.source_to_connect_to = Source;
-		RcvCreateDesc.color_format = NDIlib_recv_color_format_e_UYVY_BGRA;
+		RcvCreateDesc.color_format = ColorFormat;
 		RcvCreateDesc.bandwidth = (NDIlib_recv_bandwidth_e)Bandwidth;
 		RcvCreateDesc.allow_video_fields = true;
 	};
@@ -528,7 +561,7 @@ void FNdiMediaPlayer::SetVideoSink(IMediaTextureSink* Sink)
 
 	if (Sink != nullptr)
 	{
-		Sink->InitializeTextureSink(LastVideoDim, LastBufferDim, EMediaTextureSinkFormat::CharUYVY, EMediaTextureSinkMode::Unbuffered);
+		Sink->InitializeTextureSink(LastVideoDim, LastBufferDim, VideoSinkFormat, VideoColorSpace, EMediaTextureSinkMode::Unbuffered);
 	}
 }
 
@@ -792,9 +825,11 @@ void FNdiMediaPlayer::ProcessVideoFrame(const NDIlib_video_frame_t& VideoFrame)
 	}
 
 	// re-initialize sink if format changed
-	if (VideoSink->GetTextureSinkDimensions() != LastVideoDim)
+	if ((VideoSink->GetTextureSinkColorSpace() != VideoColorSpace) ||
+		(VideoSink->GetTextureSinkFormat() != VideoSinkFormat) ||
+		(VideoSink->GetTextureSinkDimensions() != LastVideoDim))
 	{
-		if (!VideoSink->InitializeTextureSink(LastVideoDim, LastBufferDim, EMediaTextureSinkFormat::CharUYVY, EMediaTextureSinkMode::Unbuffered))
+		if (!VideoSink->InitializeTextureSink(LastVideoDim, LastBufferDim, VideoSinkFormat, VideoColorSpace, EMediaTextureSinkMode::Unbuffered))
 		{
 			return;
 		}

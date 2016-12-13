@@ -68,7 +68,7 @@ public:
 
 	virtual FText GetDisplayName() const override
 	{
-		return LOCTEXT("MediaPlayerDisplayName", "NDI Media Player");
+		return LOCTEXT("MediaPlayerDisplayName", "Network Device Interface");
 	}
 
 	virtual FName GetName() const override

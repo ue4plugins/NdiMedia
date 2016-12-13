@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MediaSource.h"
 #include "UObject/Object.h"
 #include "UObject/ObjectMacros.h"
+#include "BaseMediaSource.h"
 
 #include "NdiMediaSource.generated.h"
 
@@ -40,24 +40,38 @@ enum class ENdiMediaFrameFormatPreference : uint8
 
 
 /**
+ * Available input color formats for NDI sources.
+ */
+UENUM(BlueprintType)
+enum class ENdiMediaColorFormat : uint8
+{
+	BGRA,
+	UYVY
+};
+
+
+/**
  * Media source for NDI streams.
  */
-UCLASS(BlueprintType, hidecategories=(Overrides, Playback))
+UCLASS(BlueprintType)
 class NDIMEDIA_API UNdiMediaSource
-	: public UMediaSource
+	: public UBaseMediaSource
 {
 	GENERATED_BODY()
-
-public:
-
-	/** Default constructor. */
-	UNdiMediaSource();
 
 public:
 
 	/** Desired bandwidth for the NDI stream (default = Highest). */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
 	ENdiMediaBandwidth Bandwidth;
+
+	/** Desired color format of input video frames (default = UYVY). */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
+	ENdiMediaColorFormat ColorFormat;
+
+	/** Color space of the video frames (default = sRGB). */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Overrides)
+	EMediaSourceColorSpace ColorSpace;
 
 	/**
 	 * The IP address and port number of the NDI source to be played, i.e "1.2.3.4:5678".
@@ -105,6 +119,11 @@ public:
 	/** Preferred video frame format type (default = NoPreference). */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
 	ENdiMediaFrameFormatPreference PreferredFrameFormat;
+
+public:
+
+	/** Default constructor. */
+	UNdiMediaSource();
 
 public:
 

@@ -20,26 +20,32 @@ DECLARE_LOG_CATEGORY_EXTERN(LogNdiMedia, Log, All);
 namespace NdiMedia
 {
 	/** Name of the AudioChannels media option. */
-	static FName AudioChannelsOption("AudioChannels");
+	static const FName AudioChannelsOption("AudioChannels");
 
 	/** Name of the AudioSampleRate media option. */
-	static FName AudioSampleRateOption("AudioSampleRate");
+	static const FName AudioSampleRateOption("AudioSampleRate");
 
 	/** Name of the Bandwidth media option. */
-	static FName BandwidthOption("Bandwidth");
+	static const FName BandwidthOption("Bandwidth");
+
+	/** Name of the ColorFormat media option. */
+	static const FName ColorFormatOption("ColorFormat");
+
+	/** Name of the ColorSpace media option. */
+	static const FName ColorSpaceOption("ColorSpace");
 
 	/** Name of the FrameRateDenominator media option. */
-	static FName FrameRateDOption("FrameRateD");
+	static const FName FrameRateDOption("FrameRateD");
 
 	/** Name of the FrameRateNumerator media option. */
-	static FName FrameRateNOption("FrameRateN");
+	static const FName FrameRateNOption("FrameRateN");
 
 	/** Name of the Progressive media option. */
-	static FName ProgressiveOption("Progressive");
+	static const FName ProgressiveOption("Progressive");
 
 	/** Name of the VideoHeight media option. */
-	static FName VideoHeightOption("VideoHeight");
+	static const FName VideoHeightOption("VideoHeight");
 
 	/** Name of the VideoWidth media option. */
-	static FName VideoWidthOption("VideoWidth");
+	static const FName VideoWidthOption("VideoWidth");
 }
