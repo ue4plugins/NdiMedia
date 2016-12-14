@@ -70,7 +70,7 @@ public:
 	ENdiMediaColorFormat ColorFormat;
 
 	/** Color space of the video frames (default = sRGB). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Overrides)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
 	EMediaSourceColorSpace ColorSpace;
 
 	/**
