@@ -69,10 +69,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
 	ENdiMediaColorFormat ColorFormat;
 
-	/** Color space of the video frames (default = sRGB). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
-	EMediaSourceColorSpace ColorSpace;
-
 	/**
 	 * The IP address and port number of the NDI source to be played, i.e "1.2.3.4:5678".
 	 *

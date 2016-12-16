@@ -41,7 +41,6 @@ FNdiMediaPlayer::FNdiMediaPlayer()
 	, LastVideoFrameRate(0.0f)
 	, Paused(false)
 	, ReceiverInstance(nullptr)
-	, VideoColorSpace(EMediaTextureSinkColorSpace::Srgb)
 	, VideoSinkFormat(EMediaTextureSinkFormat::CharUYVY)
 {
 	AudioSampler->OnSamples().BindRaw(this, &FNdiMediaPlayer::HandleAudioSamplerSample);
@@ -261,17 +260,6 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 	}
 
 	FString SourceStr = Url.RightChop(6);
-
-	// determine sink color space
-	int64 ColorSpace = Options.GetMediaOption(NdiMedia::ColorSpaceOption, (int64)EMediaTextureSinkColorSpace::Srgb);
-
-	if (ColorSpace > (int64)EMediaTextureSinkColorSpace::Srgb)
-	{
-		UE_LOG(LogNdiMedia, Warning, TEXT("Unsupported ColorSpace option in media source %s. Falling back to sRGB."), *SourceStr);
-		ColorSpace = (int64)EMediaTextureSinkColorSpace::Srgb;
-	}
-
-	VideoColorSpace = (EMediaTextureSinkColorSpace)ColorSpace;
 
 	// determine sink format
 	auto ColorFormat = (NDIlib_recv_color_format_e)Options.GetMediaOption(NdiMedia::ColorFormatOption, 0LL);
@@ -561,7 +549,7 @@ void FNdiMediaPlayer::SetVideoSink(IMediaTextureSink* Sink)
 
 	if (Sink != nullptr)
 	{
-		Sink->InitializeTextureSink(LastVideoDim, LastBufferDim, VideoSinkFormat, VideoColorSpace, EMediaTextureSinkMode::Unbuffered);
+		Sink->InitializeTextureSink(LastVideoDim, LastBufferDim, VideoSinkFormat, EMediaTextureSinkMode::Unbuffered);
 	}
 }
 
@@ -825,11 +813,10 @@ void FNdiMediaPlayer::ProcessVideoFrame(const NDIlib_video_frame_t& VideoFrame)
 	}
 
 	// re-initialize sink if format changed
-	if ((VideoSink->GetTextureSinkColorSpace() != VideoColorSpace) ||
-		(VideoSink->GetTextureSinkFormat() != VideoSinkFormat) ||
+	if ((VideoSink->GetTextureSinkFormat() != VideoSinkFormat) ||
 		(VideoSink->GetTextureSinkDimensions() != LastVideoDim))
 	{
-		if (!VideoSink->InitializeTextureSink(LastVideoDim, LastBufferDim, VideoSinkFormat, VideoColorSpace, EMediaTextureSinkMode::Unbuffered))
+		if (!VideoSink->InitializeTextureSink(LastVideoDim, LastBufferDim, VideoSinkFormat, EMediaTextureSinkMode::Unbuffered))
 		{
 			return;
 		}

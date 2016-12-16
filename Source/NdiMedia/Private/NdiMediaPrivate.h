@@ -31,9 +31,6 @@ namespace NdiMedia
 	/** Name of the ColorFormat media option. */
 	static const FName ColorFormatOption("ColorFormat");
 
-	/** Name of the ColorSpace media option. */
-	static const FName ColorSpaceOption("ColorSpace");
-
 	/** Name of the FrameRateDenominator media option. */
 	static const FName FrameRateDOption("FrameRateD");
 

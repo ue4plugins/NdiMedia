@@ -11,7 +11,6 @@
 
 class FNdiMediaAudioSampler;
 
-enum class EMediaTextureSinkColorSpace;
 enum class EMediaTextureSinkFormat;
 
 struct NDIlib_audio_frame_t;
@@ -199,9 +198,6 @@ private:
 
 	/** The current receiver instance. */
 	void* ReceiverInstance;
-
-	/** The color space of incoming video frames. */
-	EMediaTextureSinkColorSpace VideoColorSpace;
 
 	/** The current video sink format. */
 	EMediaTextureSinkFormat VideoSinkFormat;

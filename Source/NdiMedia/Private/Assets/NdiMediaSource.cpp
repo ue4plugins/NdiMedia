@@ -12,7 +12,6 @@
 UNdiMediaSource::UNdiMediaSource()
 	: Bandwidth(ENdiMediaBandwidth::Highest)
 	, ColorFormat(ENdiMediaColorFormat::UYVY)
-	, ColorSpace(EMediaSourceColorSpace::Srgb)
 	, PreferredNumAudioChannels(2)
 	, PreferredAudioSampleRate(48000)
 	, PreferredVideoWidth(0)
@@ -77,11 +76,6 @@ int64 UNdiMediaSource::GetMediaOption(const FName& Key, int64 DefaultValue) cons
 		return (int64)ColorFormat;
 	}
 
-	if (Key == NdiMedia::ColorSpaceOption)
-	{
-		return (int64)ColorSpace;
-	}
-	
 	if (Key == NdiMedia::VideoHeightOption)
 	{
 		return PreferredVideoHeight;
@@ -112,7 +106,6 @@ bool UNdiMediaSource::HasMediaOption(const FName& Key) const
 		(Key == NdiMedia::AudioSampleRateOption) ||
 		(Key == NdiMedia::BandwidthOption) ||
 		(Key == NdiMedia::ColorFormatOption) ||
-		(Key == NdiMedia::ColorSpaceOption) ||
 		(Key == NdiMedia::FrameRateDOption) ||
 		(Key == NdiMedia::FrameRateNOption) ||
 		(Key == NdiMedia::ProgressiveOption) ||
