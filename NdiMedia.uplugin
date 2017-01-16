@@ -29,7 +29,7 @@
 		},
 		{
 			"Name": "NdiMediaFactory",
-			"Type": "Runtime",
+			"Type": "RuntimeNoCommandlet",
 			"LoadingPhase" : "PostEngineInit",
 			"WhitelistPlatforms" : [ "IOS", "Linux", "Mac", "Win32", "Win64" ]
 		}
