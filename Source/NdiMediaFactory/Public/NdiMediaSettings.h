@@ -19,27 +19,27 @@ class NDIMEDIAFACTORY_API UNdiMediaSettings
 	GENERATED_UCLASS_BODY()
 
 	/** Name of this product. */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Connection)
+	UPROPERTY(config, EditAnywhere, Category=Connection)
 	FString ProductName;
 
 	/** Optional longer description text for this product. */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Connection)
+	UPROPERTY(config, EditAnywhere, Category=Connection)
 	FString ProductDescription;
 
 	/** Manufacturer of this product. */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Connection)
+	UPROPERTY(config, EditAnywhere, Category=Connection)
 	FString Manufacturer;
 
 	/** Optional serial number (for product pairing). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Connection, AdvancedDisplay)
+	UPROPERTY(config, EditAnywhere, Category=Connection, AdvancedDisplay)
 	FString SerialNumber;
 
 	/** Optional session name. */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Connection, AdvancedDisplay)
+	UPROPERTY(config, EditAnywhere, Category=Connection, AdvancedDisplay)
 	FString SessionName;
 
 	/** Custom XML metadata to attach to the connection. */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Connection, AdvancedDisplay, meta=(Multiline="true"))
+	UPROPERTY(config, EditAnywhere, Category=Connection, AdvancedDisplay, meta=(Multiline="true"))
 	FString CustomMetaData;
 
 public:
