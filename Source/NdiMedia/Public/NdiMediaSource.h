@@ -88,33 +88,41 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AssetRegistrySearchable)
 	FString SourceName;
 
+public:
+
 	/** Preferred number of audio channels (0 = no preference, default = 2). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences, AdvancedDisplay)
 	int32 PreferredNumAudioChannels;
 
 	/** Preferred audio sample rate (in samples per second, 0 = no preference, default = 48000). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences, AdvancedDisplay)
 	int32 PreferredAudioSampleRate;
 
 	/** Preferred width of the video stream (in pixels, 0 = no preference). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences, AdvancedDisplay)
 	int32 PreferredVideoWidth;
 
 	/** Preferred height of the video stream (in pixels, 0 = no preference). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences, AdvancedDisplay)
 	int32 PreferredVideoHeight;
 
 	/** Numerator of preferred video frame rate, i.e. '30000' in 30000/1001 = 29.97 fps (0 = no preference). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences, AdvancedDisplay)
 	int32 PreferredFrameRateNumerator;
 
 	/** Denominator of preferred video frame rate, i.e. '1001' in 30000/1001 = 29.97 fps (0 = no preference). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences, AdvancedDisplay)
 	int32 PreferredFrameRateDenominator;
 
 	/** Preferred video frame format type (default = NoPreference). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences)
 	ENdiMediaFrameFormatPreference PreferredFrameFormat;
+
+public:
+
+	/** Whether to use the time code embedded in the NDI stream when time code locking is enabled in the Engine. */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Synchronization)
+	bool UseTimecode;
 
 public:
 
@@ -125,6 +133,7 @@ public:
 
 	//~ IMediaOptions interface
 
+	virtual bool GetMediaOption(const FName& Key, bool DefaultValue) const override;
 	virtual FString GetMediaOption(const FName& Key, const FString& DefaultValue) const override;
 	virtual int64 GetMediaOption(const FName& Key, int64 DefaultValue) const override;
 	virtual bool HasMediaOption(const FName& Key) const override;

@@ -9,12 +9,15 @@
 #include "IMediaOptions.h"
 #include "IMediaTextureSink.h"
 #include "Misc/ScopeLock.h"
-#include "NdiMediaAudioSampler.h"
-#include "NdiMediaSettings.h"
-#include "NdiMediaSource.h"
 #include "UObject/Class.h"
 #include "UObject/UObjectGlobals.h"
 #include "UObject/WeakObjectPtr.h"
+
+#include "NdiMediaAudioSample.h"
+#include "NdiMediaBinarySample.h"
+#include "NdiMediaSettings.h"
+#include "NdiMediaSource.h"
+#include "NdiMediaTextureSample.h"
 
 #include "NdiMediaAllowPlatformTypes.h"
 
@@ -26,34 +29,26 @@
  *****************************************************************************/
 
 FNdiMediaPlayer::FNdiMediaPlayer()
-	: AudioSink(nullptr)
-	, MetadataSink(nullptr)
-	, VideoSink(nullptr)
-	, SelectedAudioTrack(INDEX_NONE)
+	: SelectedAudioTrack(INDEX_NONE)
 	, SelectedMetadataTrack(INDEX_NONE)
 	, SelectedVideoTrack(INDEX_NONE)
-	, AudioSampler(new FNdiMediaAudioSampler)
 	, CurrentState(EMediaState::Closed)
 	, LastAudioChannels(0)
 	, LastAudioSampleRate(0)
-	, LastBufferDim(FIntPoint::ZeroValue)
+	, LastTimecode(FTimespan::Zero())
+	, LastVideoBitRate(0)
 	, LastVideoDim(FIntPoint::ZeroValue)
 	, LastVideoFrameRate(0.0f)
 	, Paused(false)
 	, ReceiverInstance(nullptr)
-	, VideoSinkFormat(EMediaTextureSinkFormat::CharUYVY)
-{
-	AudioSampler->OnSamples().BindRaw(this, &FNdiMediaPlayer::HandleAudioSamplerSample);
-}
+	, UseTimecode(false)
+	, VideoSampleFormat(EMediaTextureSampleFormat::CharUYVY)
+{ }
 
 
 FNdiMediaPlayer::~FNdiMediaPlayer()
 {
 	Close();
-
-	AudioSampler->OnSamples().Unbind();
-	delete AudioSampler;
-	AudioSampler = nullptr;
 }
 
 
@@ -78,15 +73,19 @@ EMediaState FNdiMediaPlayer::GetState() const
 }
 
 
-TRange<float> FNdiMediaPlayer::GetSupportedRates(EMediaPlaybackDirections Direction, bool Unthinned) const
+TRangeSet<float> FNdiMediaPlayer::GetSupportedRates(EMediaRateThinning /*Thinning*/) const
 {
-	return TRange<float>(1.0f);
+	TRangeSet<float> Result;
+	Result.Add(TRange<float>(0.0f));
+	Result.Add(TRange<float>(1.0f));
+
+	return Result;
 }
 
 
 FTimespan FNdiMediaPlayer::GetTime() const
 {
-	return (CurrentState == EMediaState::Playing) ? FTimespan::MaxValue() : FTimespan::Zero();
+	return (CurrentState == EMediaState::Playing) ? LastTimecode : FTimespan::Zero();
 }
 
 
@@ -112,6 +111,7 @@ bool FNdiMediaPlayer::SetRate(float Rate)
 {
 	if (Rate == 0.0f)
 	{
+		FlushSinks(false);
 		Paused = true;
 	}
 	else if (Rate == 1.0f)
@@ -127,21 +127,17 @@ bool FNdiMediaPlayer::SetRate(float Rate)
 }
 
 
-bool FNdiMediaPlayer::SupportsRate(float Rate, bool Unthinned) const
+bool FNdiMediaPlayer::SupportsFeature(EMediaFeature Feature) const
 {
-	return (Rate == 1.0f);
+	return ((Feature == EMediaFeature::AudioSink) ||
+			(Feature == EMediaFeature::MetadataSink) ||
+			(Feature == EMediaFeature::VideoSink));
 }
 
 
-bool FNdiMediaPlayer::SupportsScrubbing() const
+bool FNdiMediaPlayer::SupportsRate(float Rate, EMediaRateThinning Thinning) const
 {
-	return false; // not supported
-}
-
-
-bool FNdiMediaPlayer::SupportsSeeking() const
-{
-	return false; // not supported
+	return ((Rate == 0.0f) || (Rate == 1.0f));
 }
 
 
@@ -159,21 +155,23 @@ void FNdiMediaPlayer::Close()
 			ReceiverInstance = nullptr;
 		}
 
-		CurrentState = EMediaState::Closed;
-		CurrentUrl.Empty();
-
 		LastAudioChannels = 0;
 		LastAudioSampleRate = 0;
-		LastBufferDim = FIntPoint::ZeroValue;
-		LastVideoDim = FIntPoint::ZeroValue;
-		LastVideoFrameRate = 0.0f;
-
-		SelectedAudioTrack = INDEX_NONE;
-		SelectedMetadataTrack = INDEX_NONE;
-		SelectedVideoTrack = INDEX_NONE;
 	}
 
-	UpdateAudioSampler();
+	CurrentState = EMediaState::Closed;
+	CurrentUrl.Empty();
+
+	LastTimecode = FTimespan::Zero();
+	LastVideoBitRate = 0;
+	LastVideoDim = FIntPoint::ZeroValue;
+	LastVideoFrameRate = 0.0f;
+
+	SelectedMetadataTrack = INDEX_NONE;
+	SelectedVideoTrack = INDEX_NONE;
+	SelectedAudioTrack = INDEX_NONE;
+
+	FlushSinks(true);
 
 	MediaEvent.Broadcast(EMediaEvent::TracksChanged);
 	MediaEvent.Broadcast(EMediaEvent::MediaClosed);
@@ -266,19 +264,21 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 
 	if (ColorFormat == NDIlib_recv_color_format_e_BGRX_BGRA)
 	{
-		VideoSinkFormat = EMediaTextureSinkFormat::CharBGRA;
+		VideoSampleFormat = EMediaTextureSampleFormat::CharBGRA;
 	}
 	else if (ColorFormat == NDIlib_recv_color_format_e_UYVY_BGRA)
 	{
-		VideoSinkFormat = EMediaTextureSinkFormat::CharUYVY;
+		VideoSampleFormat = EMediaTextureSampleFormat::CharUYVY;
 	}
 	else
 	{
 		UE_LOG(LogNdiMedia, Warning, TEXT("Unsupported ColorFormat option in media source %s. Falling back to UYVY."), *SourceStr);
 
 		ColorFormat = NDIlib_recv_color_format_e_UYVY_BGRA;
-		VideoSinkFormat = EMediaTextureSinkFormat::CharUYVY;
+		VideoSampleFormat = EMediaTextureSampleFormat::CharUYVY;
 	}
+
+	UseTimecode = Options.GetMediaOption(NdiMedia::UseTimecodeOption, false);
 
 	// create receiver
 	int64 Bandwidth = Options.GetMediaOption(NdiMedia::BandwidthOption, (int64)NDIlib_recv_bandwidth_highest);
@@ -309,10 +309,12 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 		RcvCreateDesc.bandwidth = (NDIlib_recv_bandwidth_e)Bandwidth;
 		RcvCreateDesc.allow_video_fields = true;
 	};
+	
+	{
+		FScopeLock Lock(&CriticalSection);
 
-	FScopeLock Lock(&CriticalSection);
-
-	ReceiverInstance = NDIlib_recv_create2(&RcvCreateDesc);
+		ReceiverInstance = NDIlib_recv_create2(&RcvCreateDesc);
+	}
 
 	if (ReceiverInstance == nullptr)
 	{
@@ -424,7 +426,73 @@ bool FNdiMediaPlayer::Open(const TSharedRef<FArchive, ESPMode::ThreadSafe>& Arch
 }
 
 
-void FNdiMediaPlayer::TickPlayer(float DeltaTime)
+/* IMediaOutput interface
+ *****************************************************************************/
+
+bool FNdiMediaPlayer::SetAudioNative(bool Enabled)
+{
+	return false; // not supported
+}
+
+
+void FNdiMediaPlayer::SetAudioNativeVolume(float Volume)
+{
+	// not supported
+}
+
+
+void FNdiMediaPlayer::SetAudioSink(TSharedPtr<IMediaAudioSink, ESPMode::ThreadSafe> Sink)
+{
+	if (Sink != AudioSinkPtr)
+	{
+		if (AudioSinkPtr.IsValid())
+		{
+			AudioSinkPtr.Pin()->FlushAudioSink(true);
+		}
+
+		AudioSinkPtr = Sink;
+	}
+}
+
+
+void FNdiMediaPlayer::SetMetadataSink(TSharedPtr<IMediaBinarySink, ESPMode::ThreadSafe> Sink)
+{
+	if (Sink != MetadataSinkPtr)
+	{
+		if (MetadataSinkPtr.IsValid())
+		{
+			MetadataSinkPtr.Pin()->FlushBinarySink(true);
+		}
+
+		MetadataSinkPtr = Sink;
+	}
+}
+
+
+void FNdiMediaPlayer::SetOverlaySink(TSharedPtr<IMediaOverlaySink, ESPMode::ThreadSafe> Sink)
+{
+	// not supported
+}
+
+
+void FNdiMediaPlayer::SetVideoSink(TSharedPtr<IMediaTextureSink, ESPMode::ThreadSafe> Sink)
+{
+	if (Sink != VideoSinkPtr)
+	{
+		if (VideoSinkPtr.IsValid())
+		{
+			VideoSinkPtr.Pin()->FlushTextureSink(true);
+		}
+
+		VideoSinkPtr = Sink;
+	}
+}
+
+
+/* IMediaTickable interface
+ *****************************************************************************/
+
+void FNdiMediaPlayer::TickInput(FTimespan Timecode, FTimespan /*DeltaTime*/, bool /*Locked*/)
 {
 	if (ReceiverInstance == nullptr)
 	{
@@ -432,125 +500,16 @@ void FNdiMediaPlayer::TickPlayer(float DeltaTime)
 	}
 
 	// update player state
-	EMediaState State = Paused ? EMediaState::Paused : (NDIlib_recv_is_connected(ReceiverInstance) ? EMediaState::Playing : EMediaState::Preparing);
+	EMediaState NewState = Paused ? EMediaState::Paused : (NDIlib_recv_is_connected(ReceiverInstance) ? EMediaState::Playing : EMediaState::Preparing);
 
-	if ((State != CurrentState) && (AudioSink != nullptr))
+	if (NewState != CurrentState)
 	{
-		CurrentState = State;
-		UpdateAudioSampler();
-
-		if (State == EMediaState::Playing)
-		{
-			MediaEvent.Broadcast(EMediaEvent::PlaybackResumed);
-
-			if (AudioSink != nullptr)
-			{
-				AudioSink->ResumeAudioSink();
-			}
-		}
-		else
-		{
-			MediaEvent.Broadcast(EMediaEvent::PlaybackSuspended);
-
-			if (AudioSink != nullptr)
-			{
-				AudioSink->PauseAudioSink();
-				AudioSink->FlushAudioSink();
-			}
-		}
+		CurrentState = NewState;
+		MediaEvent.Broadcast(NewState == EMediaState::Playing ? EMediaEvent::PlaybackResumed : EMediaEvent::PlaybackSuspended);
 	}
 
-	if (MetadataSink != nullptr)
-	{
-		CaptureMetadataFrame();
-	}
-}
-
-
-void FNdiMediaPlayer::TickVideo(float DeltaTime)
-{
-	if (!Paused)
-	{
-		CaptureVideoFrame();
-	}
-}
-
-
-/* IMediaOutput interface
- *****************************************************************************/
-
-void FNdiMediaPlayer::SetAudioSink(IMediaAudioSink* Sink)
-{
-	if (Sink == AudioSink)
-	{
-		return;
-	}
-
-	FScopeLock Lock(&CriticalSection);
-
-	if (AudioSink != nullptr)
-	{
-		AudioSink->ShutdownAudioSink();
-	}
-
-	if (Sink != nullptr)
-	{
-		Sink->InitializeAudioSink(LastAudioChannels, LastAudioSampleRate);
-	}
-
-	AudioSink = Sink;
-
-	UpdateAudioSampler();
-}
-
-
-void FNdiMediaPlayer::SetMetadataSink(IMediaBinarySink* Sink)
-{
-	if (Sink == MetadataSink)
-	{
-		return;
-	}
-
-	if (MetadataSink != nullptr)
-	{
-		MetadataSink->ShutdownBinarySink();
-	}
-
-	if (Sink != nullptr)
-	{
-		Sink->InitializeBinarySink();
-	}
-
-	MetadataSink = Sink;
-}
-
-
-void FNdiMediaPlayer::SetOverlaySink(IMediaOverlaySink* Sink)
-{
-	// not supported
-}
-
-
-void FNdiMediaPlayer::SetVideoSink(IMediaTextureSink* Sink)
-{
-	if (Sink == VideoSink)
-	{
-		return;
-	}
-
-	FScopeLock Lock(&CriticalSection);
-
-	if (VideoSink != nullptr)
-	{
-		VideoSink->ShutdownTextureSink();
-	}
-
-	VideoSink = Sink;
-
-	if (Sink != nullptr)
-	{
-		Sink->InitializeTextureSink(LastVideoDim, LastBufferDim, VideoSinkFormat, EMediaTextureSinkMode::Unbuffered);
-	}
+	// receive metadata & video frames
+	ProcessMetadataAndVideo(Timecode);
 }
 
 
@@ -559,23 +518,19 @@ void FNdiMediaPlayer::SetVideoSink(IMediaTextureSink* Sink)
 
 uint32 FNdiMediaPlayer::GetAudioTrackChannels(int32 TrackIndex) const
 {
-	if ((ReceiverInstance == nullptr) || (TrackIndex != 0))
-	{
-		return 0;
-	}
-
-	return LastAudioChannels;
+	return ((ReceiverInstance != nullptr) && (TrackIndex == 0)) ? LastAudioChannels : 0;
 }
 
 
 uint32 FNdiMediaPlayer::GetAudioTrackSampleRate(int32 TrackIndex) const
 {
-	if ((ReceiverInstance == nullptr) || (TrackIndex != 0))
-	{
-		return 0;
-	}
+	return ((ReceiverInstance != nullptr) && (TrackIndex == 0)) ? LastAudioSampleRate : 0;
+}
 
-	return LastAudioSampleRate;
+
+bool FNdiMediaPlayer::GetCacheState(EMediaTrackType TrackType, EMediaCacheState State, TRangeSet<FTimespan>& OutCachedTimes) const
+{
+	return false; // not supported
 }
 
 
@@ -641,12 +596,7 @@ FText FNdiMediaPlayer::GetTrackDisplayName(EMediaTrackType TrackType, int32 Trac
 
 FString FNdiMediaPlayer::GetTrackLanguage(EMediaTrackType TrackType, int32 TrackIndex) const
 {
-	if ((ReceiverInstance == nullptr) || (TrackIndex != 0))
-	{
-		return FString();
-	}
-
-	return TEXT("und");
+	return ((ReceiverInstance != nullptr) && (TrackIndex == 0)) ? TEXT("und") : FString();
 }
 
 
@@ -656,31 +606,21 @@ FString FNdiMediaPlayer::GetTrackName(EMediaTrackType TrackType, int32 TrackInde
 }
 
 
-uint32 FNdiMediaPlayer::GetVideoTrackBitRate(int32 TrackIndex) const
+uint64 FNdiMediaPlayer::GetVideoTrackBitRate(int32 TrackIndex) const
 {
-	return 0;
+	return ((ReceiverInstance != nullptr) && (TrackIndex == 0)) ? LastVideoBitRate : 0;
 }
 
 
 FIntPoint FNdiMediaPlayer::GetVideoTrackDimensions(int32 TrackIndex) const
 {
-	if ((ReceiverInstance == nullptr) || (TrackIndex != 0))
-	{
-		return FIntPoint::ZeroValue;
-	}
-
-	return LastVideoDim;
+	return ((ReceiverInstance != nullptr) && (TrackIndex == 0)) ? LastVideoDim : FIntPoint::ZeroValue;
 }
 
 
 float FNdiMediaPlayer::GetVideoTrackFrameRate(int32 TrackIndex) const
 {
-	if ((ReceiverInstance == nullptr) || (TrackIndex != 0))
-	{
-		return 0;
-	}
-
-	return LastVideoFrameRate;
+	return ((ReceiverInstance != nullptr) && (TrackIndex == 0)) ? LastVideoFrameRate : 0;
 }
 
 
@@ -693,138 +633,218 @@ bool FNdiMediaPlayer::SelectTrack(EMediaTrackType TrackType, int32 TrackIndex)
 
 	if (TrackType == EMediaTrackType::Audio)
 	{
-		SelectedAudioTrack = TrackIndex;
-		UpdateAudioSampler();
-	}
-	else if (TrackType == EMediaTrackType::Metadata)
-	{
-		SelectedMetadataTrack = TrackIndex;
-	}
-	else if (TrackType == EMediaTrackType::Video)
-	{
-		SelectedVideoTrack = TrackIndex;
-	}
-	else
-	{
-		return false;
+		if (SelectedAudioTrack != TrackIndex)
+		{
+			SelectedAudioTrack = TrackIndex;
+
+			if (AudioSinkPtr.IsValid())
+			{
+				AudioSinkPtr.Pin()->FlushAudioSink(false);
+			}
+		}
+
+		return true;
 	}
 
-	return true;
+	if (TrackType == EMediaTrackType::Metadata)
+	{
+		if (SelectedMetadataTrack != TrackIndex)
+		{
+			SelectedMetadataTrack = TrackIndex;
+
+			if (MetadataSinkPtr.IsValid())
+			{
+				MetadataSinkPtr.Pin()->FlushBinarySink(false);
+			}
+		}
+
+		return true;
+	}
+	
+	if (TrackType == EMediaTrackType::Video)
+	{
+		if (SelectedVideoTrack != TrackIndex)
+		{
+			SelectedVideoTrack = TrackIndex;
+
+			if (VideoSinkPtr.IsValid())
+			{
+				VideoSinkPtr.Pin()->FlushTextureSink(false);
+			}
+		}
+
+		return true;
+	}
+
+	return false;
 }
+
+
+/* INdiMediaAudioTickable interface
+ *****************************************************************************/
+
+void FNdiMediaPlayer::TickAudio(FTimespan Timecode)
+{
+	FScopeLock Lock(&CriticalSection);
+
+	if (ReceiverInstance != nullptr)
+	{
+		if (AudioSinkPtr.IsValid())
+		{
+			const bool PlayAudio = (CurrentState == EMediaState::Playing) && (SelectedAudioTrack == 0);
+			AudioSinkPtr.Pin()->SetAudioSinkRate(PlayAudio ? 1.0f : 0.0f);
+		}
+
+		ProcessAudio(Timecode);
+	}
+}
+
 
 
 /* FNdiMediaPlayer implementation
  *****************************************************************************/
 
-void FNdiMediaPlayer::CaptureMetadataFrame()
+void FNdiMediaPlayer::FlushSinks(bool Shutdown)
 {
-	NDIlib_metadata_frame_t MetadataFrame;
-	NDIlib_frame_type_e FrameType = NDIlib_recv_capture(ReceiverInstance, nullptr, nullptr, &MetadataFrame, 0);
-
-	if (FrameType == NDIlib_frame_type_error)
+	if (AudioSinkPtr.IsValid())
 	{
-		UE_LOG(LogNdiMedia, Verbose, TEXT("Failed to receive metadata frame"));
-		return;
+		AudioSinkPtr.Pin()->FlushAudioSink(Shutdown);
 	}
 
-	if (FrameType != NDIlib_frame_type_metadata)
+	if (MetadataSinkPtr.IsValid())
 	{
-		return;
+		MetadataSinkPtr.Pin()->FlushBinarySink(Shutdown);
 	}
 
-	MetadataSink->ProcessBinarySinkData((const uint8*)MetadataFrame.p_data, MetadataFrame.length, FTimespan(MetadataFrame.timecode), FTimespan::Zero());
-
-	NDIlib_recv_free_metadata(ReceiverInstance, &MetadataFrame);
+	if (VideoSinkPtr.IsValid())
+	{
+		VideoSinkPtr.Pin()->FlushTextureSink(Shutdown);
+	}
 }
 
 
-void FNdiMediaPlayer::CaptureVideoFrame()
+void FNdiMediaPlayer::ProcessAudio(FTimespan Timecode)
 {
-	NDIlib_video_frame_t VideoFrame;
-	NDIlib_frame_type_e FrameType = NDIlib_recv_capture(ReceiverInstance, &VideoFrame, nullptr, nullptr, 0);
+	auto AudioSink = AudioSinkPtr.Pin();
 
-	if (FrameType == NDIlib_frame_type_error)
+	while (true)
 	{
-		UE_LOG(LogNdiMedia, Verbose, TEXT("Failed to receive video frame"));
-		return;
-	}
+		NDIlib_audio_frame_t AudioFrame;
+		NDIlib_frame_type_e FrameType = NDIlib_recv_capture(ReceiverInstance, nullptr, &AudioFrame, nullptr, 0);
 
-	if (FrameType != NDIlib_frame_type_video)
-	{
-		return;
-	}
-
-	// re-initialize sink if format changed
-	FScopeLock Lock(&CriticalSection);
-	ProcessVideoFrame(VideoFrame);
-
-	NDIlib_recv_free_video(ReceiverInstance, &VideoFrame);
-}
-
-
-void FNdiMediaPlayer::ProcessAudioFrame(const NDIlib_audio_frame_t& AudioFrame)
-{
-	LastAudioChannels = AudioFrame.no_channels;
-	LastAudioSampleRate = AudioFrame.sample_rate;
-
-	if (AudioSink == nullptr)
-	{
-		return;
-	}
-
-	// re-initialize sink if format changed
-	if ((AudioSink->GetAudioSinkChannels() != AudioFrame.no_channels) ||
-		(AudioSink->GetAudioSinkSampleRate() != AudioFrame.sample_rate))
-	{
-		if (!AudioSink->InitializeAudioSink(AudioFrame.no_channels, AudioFrame.sample_rate))
+		if (FrameType == NDIlib_frame_type_error)
 		{
+			UE_LOG(LogNdiMedia, Verbose, TEXT("Failed to receive audio frame"));
 			return;
 		}
+
+		if (FrameType == NDIlib_frame_type_none)
+		{
+			return; // no more frames available
+		}
+
+		if (FrameType == NDIlib_frame_type_audio)
+		{
+			LastAudioChannels = AudioFrame.no_channels;
+			LastAudioSampleRate = AudioFrame.sample_rate;
+			LastTimecode = FTimespan(AudioFrame.timecode);
+
+			// forward sample to audio sink, or release buffer
+			if ((CurrentState == EMediaState::Playing) && (SelectedAudioTrack == 0) && AudioSink.IsValid())
+			{
+				TSharedRef<FNdiMediaAudioSample, ESPMode::ThreadSafe> Sample = MakeShareable(
+					new FNdiMediaAudioSample(
+						ReceiverInstance,
+						Timecode,
+						AudioFrame,
+						UseTimecode
+					)
+				);
+
+				AudioSink->OnAudioSample(Sample);
+			}
+			else
+			{
+				NDIlib_recv_free_audio(ReceiverInstance, &AudioFrame);
+			}
+		}
 	}
-
-	// convert float samples to interleaved 16-bit samples
-	uint32 TotalSamples = AudioFrame.no_samples * AudioFrame.no_channels;
-
-	NDIlib_audio_frame_interleaved_16s_t AudioFrameInterleaved = { 0 };
-	{
-		AudioFrameInterleaved.reference_level = 20;
-		AudioFrameInterleaved.p_data = new short[TotalSamples];
-	}
-
-	NDIlib_util_audio_to_interleaved_16s(&AudioFrame, &AudioFrameInterleaved);
-
-	// forward to sink
-	static int64 SamplesReceived = 0;
-	SamplesReceived += TotalSamples;
-	AudioSink->PlayAudioSink((const uint8*)AudioFrameInterleaved.p_data, TotalSamples * sizeof(int16), FTimespan(AudioFrame.timecode));
-
-	delete[] AudioFrameInterleaved.p_data;
 }
 
 
-void FNdiMediaPlayer::ProcessVideoFrame(const NDIlib_video_frame_t& VideoFrame)
+void FNdiMediaPlayer::ProcessMetadataAndVideo(FTimespan Timecode)
 {
-	LastBufferDim = FIntPoint(VideoFrame.line_stride_in_bytes / 4, VideoFrame.yres);
-	LastVideoDim = FIntPoint(VideoFrame.xres, VideoFrame.yres);
+	auto MetadataSink = MetadataSinkPtr.Pin();
+	auto VideoSink = VideoSinkPtr.Pin();
 
-	if (VideoSink == nullptr)
+	while (true)
 	{
-		return;
-	}
+		NDIlib_metadata_frame_t MetadataFrame;
+		NDIlib_video_frame_t VideoFrame;
+		NDIlib_frame_type_e FrameType = NDIlib_recv_capture(ReceiverInstance, &VideoFrame, nullptr, &MetadataFrame, 0);
 
-	// re-initialize sink if format changed
-	if ((VideoSink->GetTextureSinkFormat() != VideoSinkFormat) ||
-		(VideoSink->GetTextureSinkDimensions() != LastVideoDim))
-	{
-		if (!VideoSink->InitializeTextureSink(LastVideoDim, LastBufferDim, VideoSinkFormat, EMediaTextureSinkMode::Unbuffered))
+		if (FrameType == NDIlib_frame_type_error)
 		{
+			UE_LOG(LogNdiMedia, Verbose, TEXT("Failed to receive NDI frame"));
 			return;
 		}
-	}
 
-	// forward to sink
-	VideoSink->UpdateTextureSinkBuffer(VideoFrame.p_data, VideoFrame.line_stride_in_bytes);
-	VideoSink->DisplayTextureSinkBuffer(FTimespan(VideoFrame.timecode));
+		if (FrameType == NDIlib_frame_type_none)
+		{
+			return; // no more frames available
+		}
+
+		if (FrameType == NDIlib_frame_type_metadata)
+		{
+			LastTimecode = FTimespan(MetadataFrame.timecode);
+
+			// forward sample to metadata sink, or release buffer
+			if ((CurrentState == EMediaState::Playing) && (SelectedMetadataTrack == 0) && MetadataSink.IsValid())
+			{
+				TSharedRef<FNdiMediaBinarySample, ESPMode::ThreadSafe> Sample = MakeShareable(
+					new FNdiMediaBinarySample(
+						ReceiverInstance,
+						Timecode,
+						MetadataFrame,
+						UseTimecode
+					)
+				);
+
+				MetadataSink->OnBinarySample(Sample);
+			}
+			else
+			{
+				NDIlib_recv_free_metadata(ReceiverInstance, &MetadataFrame);
+			}
+		}
+		else if (FrameType == NDIlib_frame_type_video)
+		{
+			LastTimecode = FTimespan(VideoFrame.timecode);
+			LastVideoDim = FIntPoint(VideoFrame.line_stride_in_bytes / 4, VideoFrame.yres);
+			LastVideoFrameRate = (float)VideoFrame.frame_rate_N / (float)VideoFrame.frame_rate_D;
+			LastVideoBitRate = (uint64)(VideoFrame.line_stride_in_bytes * VideoFrame.yres * LastVideoFrameRate);
+
+			// forward sample to video sink, or release buffer
+			if ((CurrentState == EMediaState::Playing) && (SelectedVideoTrack == 0) && VideoSink.IsValid())
+			{
+				TSharedRef<FNdiMediaTextureSample, ESPMode::ThreadSafe> Sample = MakeShareable(
+					new FNdiMediaTextureSample(
+						ReceiverInstance,
+						Timecode,
+						VideoFrame,
+						VideoSampleFormat,
+						UseTimecode
+					)
+				);
+
+				VideoSink->OnTextureSample(Sample);
+			}
+			else
+			{
+				NDIlib_recv_free_video(ReceiverInstance, &VideoFrame);
+			}
+		}
+	}
 }
 
 
@@ -843,24 +863,6 @@ void FNdiMediaPlayer::SendMetadata(const FString& Metadata, int64 Timecode)
 }
 
 
-void FNdiMediaPlayer::UpdateAudioSampler()
-{
-	const bool SampleAudio = !Paused && (AudioSink != nullptr) && (SelectedAudioTrack == 0);
-	AudioSampler->SetReceiverInstance(SampleAudio ? ReceiverInstance : nullptr);
-}
-
-
-/* FNdiMediaPlayer implementation
- *****************************************************************************/
-
-void FNdiMediaPlayer::HandleAudioSamplerSample(const NDIlib_audio_frame_t& AudioFrame)
-{
-	FScopeLock Lock(&CriticalSection);
-	ProcessAudioFrame(AudioFrame);
-}
-
-
 #undef LOCTEXT_NAMESPACE
-
 
 #include "NdiMediaHidePlatformTypes.h"

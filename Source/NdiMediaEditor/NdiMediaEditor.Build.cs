@@ -4,7 +4,7 @@ namespace UnrealBuildTool.Rules
 {
 	public class NdiMediaEditor : ModuleRules
 	{
-		public NdiMediaEditor(TargetInfo Target)
+		public NdiMediaEditor(ReadOnlyTargetRules Target) : base(Target)
 		{
 			PrivateDependencyModuleNames.AddRange(
 				new string[] {

@@ -8,7 +8,7 @@ namespace UnrealBuildTool.Rules
 
 	public class NdiMedia : ModuleRules
 	{
-		public NdiMedia(TargetInfo Target)
+		public NdiMedia(ReadOnlyTargetRules Target) : base(Target)
 		{
 			DynamicallyLoadedModuleNames.AddRange(
 				new string[] {

@@ -60,7 +60,7 @@ public:
 		return true;
 	}
 
-	virtual TSharedPtr<IMediaPlayer> CreatePlayer() override
+	virtual TSharedPtr<IMediaPlayer, ESPMode::ThreadSafe> CreatePlayer() override
 	{
 		auto NdiMediaModule = FModuleManager::LoadModulePtr<INdiMediaModule>("NdiMedia");
 		return (NdiMediaModule != nullptr) ? NdiMediaModule->CreatePlayer() : nullptr;

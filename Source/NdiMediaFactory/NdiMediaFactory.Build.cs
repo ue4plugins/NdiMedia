@@ -4,7 +4,7 @@ namespace UnrealBuildTool.Rules
 {
 	public class NdiMediaFactory : ModuleRules
 	{
-		public NdiMediaFactory(TargetInfo Target)
+		public NdiMediaFactory(ReadOnlyTargetRules Target) : base(Target)
 		{
 			DynamicallyLoadedModuleNames.AddRange(
 				new string[] {

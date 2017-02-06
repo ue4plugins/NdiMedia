@@ -40,6 +40,9 @@ namespace NdiMedia
 	/** Name of the Progressive media option. */
 	static const FName ProgressiveOption("Progressive");
 
+	/** Name of the UseTimecode media option. */
+	static const FName UseTimecodeOption("UseTimecode");
+
 	/** Name of the VideoHeight media option. */
 	static const FName VideoHeightOption("VideoHeight");
 
