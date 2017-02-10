@@ -1,4 +1,4 @@
-// Copyright 2015 Headcrash Industries LLC. All Rights Reserved.
+// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #ifdef NDI_PLATFORM_TYPES_GUARD
 	#undef NDI_PLATFORM_TYPES_GUARD
