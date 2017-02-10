@@ -49,8 +49,11 @@ public:
 	{
 		if (FrameInterleaved.p_data == nullptr)
 		{
+			const int32 TotalSamples = Frame.no_samples * Frame.no_channels;
+
 			FrameInterleaved.reference_level = 20;
-			FrameInterleaved.p_data = new short[GetCount()];
+			FrameInterleaved.p_data = new short[TotalSamples];
+
 			NDIlib_util_audio_to_interleaved_16s(&Frame, &FrameInterleaved);
 		}
 
@@ -62,11 +65,6 @@ public:
 		return Frame.no_channels;
 	}
 
-	virtual uint32 GetCount() const override
-	{
-		return Frame.no_samples * Frame.no_channels;
-	}
-
 	virtual FTimespan GetDuration() const override
 	{
 		return FTimespan(ETimespan::TicksPerSecond * Frame.no_samples / Frame.sample_rate);
@@ -75,6 +73,11 @@ public:
 	virtual EMediaAudioSampleFormat GetFormat() const override
 	{
 		return EMediaAudioSampleFormat::Int16;
+	}
+
+	virtual uint32 GetFrames() const override
+	{
+		return Frame.no_samples;
 	}
 
 	virtual uint32 GetSampleRate() const override
