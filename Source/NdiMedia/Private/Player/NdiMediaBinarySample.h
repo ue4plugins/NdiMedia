@@ -38,9 +38,9 @@ public:
 
 	//~ IMediaBinarySample interface
 
-	virtual const uint8& GetData() const override
+	virtual const void* GetData() const override
 	{
-		return *((uint8*)Frame.p_data);
+		return Frame.p_data;
 	}
 
 	virtual FTimespan GetDuration() const override
