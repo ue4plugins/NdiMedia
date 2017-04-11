@@ -1,4 +1,4 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+// Copyright 2015 Headcrash Industries LLC. All Rights Reserved.
 
 using System.IO;
 
@@ -10,7 +10,9 @@ namespace UnrealBuildTool.Rules
 	{
 		public NdiMedia(ReadOnlyTargetRules Target) : base(Target)
 		{
-			DynamicallyLoadedModuleNames.AddRange(
+            PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+ 
+            DynamicallyLoadedModuleNames.AddRange(
 				new string[] {
 					"Media",
 				}

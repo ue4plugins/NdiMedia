@@ -1,4 +1,4 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+// Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
 namespace UnrealBuildTool.Rules
 {
@@ -6,7 +6,9 @@ namespace UnrealBuildTool.Rules
 	{
 		public NdiMediaFactory(ReadOnlyTargetRules Target) : base(Target)
 		{
-			DynamicallyLoadedModuleNames.AddRange(
+            PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
+            DynamicallyLoadedModuleNames.AddRange(
 				new string[] {
 					"Media",
 				}

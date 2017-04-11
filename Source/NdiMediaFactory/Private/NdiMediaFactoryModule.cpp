@@ -1,4 +1,4 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+// Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
 #include "CoreMinimal.h"
 #include "IMediaPlayerFactory.h"
@@ -60,7 +60,7 @@ public:
 		return true;
 	}
 
-	virtual TSharedPtr<IMediaPlayer, ESPMode::ThreadSafe> CreatePlayer() override
+	virtual TSharedPtr<IMediaPlayer> CreatePlayer() override
 	{
 		auto NdiMediaModule = FModuleManager::LoadModulePtr<INdiMediaModule>("NdiMedia");
 		return (NdiMediaModule != nullptr) ? NdiMediaModule->CreatePlayer() : nullptr;

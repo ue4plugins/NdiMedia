@@ -1,4 +1,4 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
+// Copyright 2015 Headcrash Industries LLC. All Rights Reserved.
 
 #include "Ndi.h"
 #include "NdiMediaPrivate.h"
