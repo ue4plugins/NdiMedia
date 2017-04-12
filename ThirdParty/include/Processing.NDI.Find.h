@@ -45,25 +45,37 @@ typedef struct NDIlib_find_create_t
 	// When none is specified the registry is used.
 	// Default = NULL;
 	const char* p_extra_ips;
+
 } NDIlib_find_create_t;
 
 //**************************************************************************************************************************
 // Create a new finder instance. This will return NULL if it fails.
-// This function is depreciated, please use NDIlib_find_create2 if you can. This function
+// This function is deprecated, please use NDIlib_find_create_v2 if you can. This function
 // ignores the p_extra_ips member and sets it to the default.
 PROCESSINGNDILIB_API
-NDIlib_find_instance_t NDIlib_find_create(const NDIlib_find_create_t* p_create_settings);
+NDIlib_find_instance_t NDIlib_find_create_v2(const NDIlib_find_create_t* p_create_settings);
 
-PROCESSINGNDILIB_API
-NDIlib_find_instance_t NDIlib_find_create2(const NDIlib_find_create_t* p_create_settings);
+// For legacy reasons I called this the wrong thing. For backwards compatability.
+#define NDIlib_find_create2 NDIlib_find_create_v2
+
+PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
+NDIlib_find_instance_t NDIlib_find_create(const NDIlib_find_create_t* p_create_settings);
 
 // This will destroy an existing finder instance.
 PROCESSINGNDILIB_API
 void NDIlib_find_destroy(NDIlib_find_instance_t p_instance);
 
-// This will recover the current set of located NDI sources. The string list is 
-// retained as a member of the instance (so you do not need to worry about freeing it)
-// and is valid until you call this function again. When the instance is destroyed
-// the pointer is no longer valid either.
+// This function will recover the current set of sources (i.e. the ones that exist right this second).
 PROCESSINGNDILIB_API
-const NDIlib_source_t* NDIlib_find_get_sources(NDIlib_find_instance_t p_instance, int* p_no_sources, uint32_t timeout_in_ms);
+const NDIlib_source_t* NDIlib_find_get_current_sources(NDIlib_find_instance_t p_instance, uint32_t* p_no_sources);
+
+// This will allow you to wait until the number of online sources have changed.
+PROCESSINGNDILIB_API
+bool NDIlib_find_wait_for_sources(NDIlib_find_instance_t p_instance, uint32_t timeout_in_ms);
+
+// DEPRECATED. This function is basically exactly the following and was confusing to use.
+//		if ((!timeout_in_ms) || (NDIlib_find_wait_for_sources(timeout_in_ms))) 
+//				return NDIlib_find_get_current_sources(p_instance, p_no_sources);
+//		return NULL;
+PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
+const NDIlib_source_t* NDIlib_find_get_sources(NDIlib_find_instance_t p_instance, uint32_t* p_no_sources, uint32_t timeout_in_ms);

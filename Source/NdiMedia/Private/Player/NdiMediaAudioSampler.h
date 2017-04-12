@@ -6,11 +6,11 @@
 #include "HAL/Runnable.h"
 
 
-struct NDIlib_audio_frame_t;
+struct NDIlib_audio_frame_v2_t;
 
 
 /** Delegate that is executed when new audio samples are ready for playback. */
-DECLARE_DELEGATE_OneParam(FOnNdiMediaAudioSamplerSamples, const NDIlib_audio_frame_t& /*AudioFrame*/);
+DECLARE_DELEGATE_OneParam(FOnNdiMediaAudioSamplerSamples, const NDIlib_audio_frame_v2_t& /*AudioFrame*/);
 
 
 class FNdiMediaAudioSampler

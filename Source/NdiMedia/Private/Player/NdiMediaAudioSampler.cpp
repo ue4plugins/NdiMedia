@@ -75,9 +75,9 @@ void FNdiMediaAudioSampler::SampleAudio(uint32 Timeout)
 	}
 
 	// fetch audio frame
-	NDIlib_audio_frame_t AudioFrame;
+	NDIlib_audio_frame_v2_t AudioFrame;
 	{
-		NDIlib_frame_type_e FrameType = NDIlib_recv_capture(ReceiverInstance, nullptr, &AudioFrame, nullptr, Timeout);
+		NDIlib_frame_type_e FrameType = NDIlib_recv_capture_v2(ReceiverInstance, nullptr, &AudioFrame, nullptr, Timeout);
 
 		if (FrameType == NDIlib_frame_type_error)
 		{
@@ -97,6 +97,6 @@ void FNdiMediaAudioSampler::SampleAudio(uint32 Timeout)
 	if (CurrentReceiverInstance == ReceiverInstance)
 	{
 		SamplesDelegate.ExecuteIfBound(AudioFrame);
-		NDIlib_recv_free_audio(ReceiverInstance, &AudioFrame);
+		NDIlib_recv_free_audio_v2(ReceiverInstance, &AudioFrame);
 	}
 }

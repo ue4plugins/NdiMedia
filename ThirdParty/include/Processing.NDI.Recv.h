@@ -28,16 +28,19 @@ typedef void* NDIlib_recv_instance_t;
 
 typedef enum NDIlib_recv_bandwidth_e
 {
-	NDIlib_recv_bandwidth_audio_only = 10, // Receive only audio.
-	NDIlib_recv_bandwidth_lowest     = 0,  // Receive video at a lower bandwidth and resolution.
-	NDIlib_recv_bandwidth_highest    = 100 // Default.
+	NDIlib_recv_bandwidth_metadata_only = -10, // Receive metadata.
+	NDIlib_recv_bandwidth_audio_only	=  10, // Receive metadata, audio.
+	NDIlib_recv_bandwidth_lowest		=  0,  // Receive metadata, audio, video at a lower bandwidth and resolution.
+	NDIlib_recv_bandwidth_highest		=  100 // Receive metadata, audio, video at full resolution.
 
 }	NDIlib_recv_bandwidth_e;
 
 typedef enum NDIlib_recv_color_format_e
 {	
 	NDIlib_recv_color_format_e_BGRX_BGRA = 0,	// No alpha channel: BGRX, Alpha channel: BGRA
-	NDIlib_recv_color_format_e_UYVY_BGRA = 1	// No alpha channel: UYVY, Alpha channel: BGRA
+	NDIlib_recv_color_format_e_UYVY_BGRA = 1,	// No alpha channel: UYVY, Alpha channel: BGRA
+	NDIlib_recv_color_format_e_RGBX_RGBA = 2,	// No alpha channel: RGBX, Alpha channel: RGBA
+	NDIlib_recv_color_format_e_UYVY_RGBA = 3	// No alpha channel: UYVY, Alpha channel: RGBA
 
 }	NDIlib_recv_color_format_e;
 
@@ -92,11 +95,14 @@ typedef struct NDIlib_recv_queue_t
 //**************************************************************************************************************************
 // Create a new receiver instance. This will return NULL if it fails.
 PROCESSINGNDILIB_API
-NDIlib_recv_instance_t NDIlib_recv_create2(const NDIlib_recv_create_t* p_create_settings);
+NDIlib_recv_instance_t NDIlib_recv_create_v2(const NDIlib_recv_create_t* p_create_settings);
 
-// This function is depreciated, please use NDIlib_recv_create2 if you can. Using this function will continue to work, and be
+// For legacy reasons I called this the wrong thing. For backwards compatability.
+#define NDIlib_recv_create2 NDIlib_recv_create_v2
+
+// This function is deprecated, please use NDIlib_recv_create_v2 if you can. Using this function will continue to work, and be
 // supported for backwards compatibility. This version sets bandwidth to highest and allow fields to true.
-PROCESSINGNDILIB_API
+PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
 NDIlib_recv_instance_t NDIlib_recv_create(const NDIlib_recv_create_t* p_create_settings);
 
 // This will destroy an existing receiver instance.
@@ -110,7 +116,7 @@ void NDIlib_recv_destroy(NDIlib_recv_instance_t p_instance);
 // all on separate threads. This function will return NDIlib_frame_type_none if no
 // data is received within the specified timeout and NDIlib_frame_type_error if the connection is lost.
 // Buffers captured with this must be freed with the appropriate free function below.
-PROCESSINGNDILIB_API
+PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
 NDIlib_frame_type_e NDIlib_recv_capture(
 	NDIlib_recv_instance_t p_instance,   // The library instance
 	NDIlib_video_frame_t* p_video_data,  // The video data received (can be NULL)
@@ -118,13 +124,27 @@ NDIlib_frame_type_e NDIlib_recv_capture(
 	NDIlib_metadata_frame_t* p_metadata, // The metadata received (can be NULL)
 	uint32_t timeout_in_ms);             // The amount of time in milliseconds to wait for data.
 
-// Free the buffers returned by capture for video
 PROCESSINGNDILIB_API
+NDIlib_frame_type_e NDIlib_recv_capture_v2(
+	NDIlib_recv_instance_t p_instance,   // The library instance
+	NDIlib_video_frame_v2_t* p_video_data,  // The video data received (can be NULL)
+	NDIlib_audio_frame_v2_t* p_audio_data,  // The audio data received (can be NULL)
+	NDIlib_metadata_frame_t* p_metadata, // The metadata received (can be NULL)
+	uint32_t timeout_in_ms);             // The amount of time in milliseconds to wait for data.
+
+// Free the buffers returned by capture for video
+PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
 void NDIlib_recv_free_video(NDIlib_recv_instance_t p_instance, const NDIlib_video_frame_t* p_video_data);
 
-// Free the buffers returned by capture for audio
 PROCESSINGNDILIB_API
+void NDIlib_recv_free_video_v2(NDIlib_recv_instance_t p_instance, const NDIlib_video_frame_v2_t* p_video_data);
+
+// Free the buffers returned by capture for audio
+PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
 void NDIlib_recv_free_audio(NDIlib_recv_instance_t p_instance, const NDIlib_audio_frame_t* p_audio_data);
+
+PROCESSINGNDILIB_API 
+void NDIlib_recv_free_audio_v2(NDIlib_recv_instance_t p_instance, const NDIlib_audio_frame_v2_t* p_audio_data);
 
 // Free the buffers returned by capture for metadata
 PROCESSINGNDILIB_API
@@ -163,4 +183,4 @@ void NDIlib_recv_add_connection_metadata(NDIlib_recv_instance_t p_instance, cons
 // Is this receiver currently connected to a source on the other end, or has the source not yet been found or is no longe ronline.
 // This will normally return 0 or 1
 PROCESSINGNDILIB_API
-bool NDIlib_recv_is_connected(NDIlib_recv_instance_t p_instance);
+int NDIlib_recv_get_no_connections(NDIlib_recv_instance_t p_instance);

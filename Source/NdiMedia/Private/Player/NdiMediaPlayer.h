@@ -13,8 +13,8 @@ class FNdiMediaAudioSampler;
 
 enum class EMediaTextureSinkFormat;
 
-struct NDIlib_audio_frame_t;
-struct NDIlib_video_frame_t;
+struct NDIlib_audio_frame_v2_t;
+struct NDIlib_video_frame_v2_t;
 
 
 /**
@@ -113,7 +113,7 @@ protected:
 	 * @param AudioFrame The audio frame to process.
 	 * @see ProcessVideoFrame
 	 */
-	void ProcessAudioFrame(const NDIlib_audio_frame_t& AudioFrame);
+	void ProcessAudioFrame(const NDIlib_audio_frame_v2_t& AudioFrame);
 
 	/**
 	 * Process a received audio frame.
@@ -121,7 +121,7 @@ protected:
 	 * @param AudioFrame The audio frame to process.
 	 * @see ProcessVideoFrame
 	 */
-	void ProcessVideoFrame(const NDIlib_video_frame_t& VideoFrame);
+	void ProcessVideoFrame(const NDIlib_video_frame_v2_t& VideoFrame);
 
 	/**
 	 * Send the given metadata to the connection.
@@ -137,7 +137,7 @@ protected:
 private:
 
 	/** Callback for new samples from the audio sampler thread. */
-	void HandleAudioSamplerSample(const NDIlib_audio_frame_t& AudioFrame);
+	void HandleAudioSamplerSample(const NDIlib_audio_frame_v2_t& AudioFrame);
 
 private:
 

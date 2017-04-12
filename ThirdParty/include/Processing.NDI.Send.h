@@ -53,8 +53,11 @@ PROCESSINGNDILIB_API
 void NDIlib_send_destroy(NDIlib_send_instance_t p_instance);
 
 // This will add a video frame
-PROCESSINGNDILIB_API
+PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
 void NDIlib_send_send_video(NDIlib_send_instance_t p_instance, const NDIlib_video_frame_t* p_video_data);
+
+PROCESSINGNDILIB_API 
+void NDIlib_send_send_video_v2(NDIlib_send_instance_t p_instance, const NDIlib_video_frame_v2_t* p_video_data);
 
 // This will add a video frame and will return immediately, having scheduled the frame to be displayed. 
 // All processing and sending of the video will occur asynchronously. The memory accessed by NDIlib_video_frame_t 
@@ -70,12 +73,18 @@ void NDIlib_send_send_video(NDIlib_send_instance_t p_instance, const NDIlib_vide
 //		- a call to NDIlib_send_send_video_async with another frame to be sent
 //		- a call to NDIlib_send_send_video with p_video_data=NULL
 //		- a call to NDIlib_send_destroy
-PROCESSINGNDILIB_API
+PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
 void NDIlib_send_send_video_async(NDIlib_send_instance_t p_instance, const NDIlib_video_frame_t* p_video_data);
 
-// This will add an audio frame
 PROCESSINGNDILIB_API
+void NDIlib_send_send_video_async_v2(NDIlib_send_instance_t p_instance, const NDIlib_video_frame_v2_t* p_video_data);
+
+// This will add an audio frame
+PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
 void NDIlib_send_send_audio(NDIlib_send_instance_t p_instance, const NDIlib_audio_frame_t* p_audio_data);
+
+PROCESSINGNDILIB_API
+void NDIlib_send_send_audio_v2(NDIlib_send_instance_t p_instance, const NDIlib_audio_frame_v2_t* p_audio_data);
 
 // This will add a metadata frame
 PROCESSINGNDILIB_API

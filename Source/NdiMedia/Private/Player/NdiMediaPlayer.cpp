@@ -62,7 +62,8 @@ FNdiMediaPlayer::~FNdiMediaPlayer()
 
 FTimespan FNdiMediaPlayer::GetDuration() const
 {
-	return (CurrentState == EMediaState::Playing) ? FTimespan::MaxValue() : FTimespan::Zero();
+	return FTimespan::Zero();
+//	return (CurrentState == EMediaState::Playing) ? FTimespan::MaxValue() : FTimespan::Zero();
 }
 
 
@@ -86,7 +87,8 @@ TRange<float> FNdiMediaPlayer::GetSupportedRates(EMediaPlaybackDirections Direct
 
 FTimespan FNdiMediaPlayer::GetTime() const
 {
-	return (CurrentState == EMediaState::Playing) ? FTimespan::MaxValue() : FTimespan::Zero();
+	return FTimespan::Zero();
+//	return (CurrentState == EMediaState::Playing) ? FTimespan::MaxValue() : FTimespan::Zero();
 }
 
 
@@ -312,7 +314,7 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions& Options)
 
 	FScopeLock Lock(&CriticalSection);
 
-	ReceiverInstance = NDIlib_recv_create2(&RcvCreateDesc);
+	ReceiverInstance = NDIlib_recv_create_v2(&RcvCreateDesc);
 
 	if (ReceiverInstance == nullptr)
 	{
@@ -432,7 +434,8 @@ void FNdiMediaPlayer::TickPlayer(float DeltaTime)
 	}
 
 	// update player state
-	EMediaState State = Paused ? EMediaState::Paused : (NDIlib_recv_is_connected(ReceiverInstance) ? EMediaState::Playing : EMediaState::Preparing);
+	const bool IsConnected = (NDIlib_recv_get_no_connections(ReceiverInstance) > 0);
+	const EMediaState State = Paused ? EMediaState::Paused : (IsConnected ? EMediaState::Playing : EMediaState::Preparing);
 
 	if ((State != CurrentState) && (AudioSink != nullptr))
 	{
@@ -719,7 +722,7 @@ bool FNdiMediaPlayer::SelectTrack(EMediaTrackType TrackType, int32 TrackIndex)
 void FNdiMediaPlayer::CaptureMetadataFrame()
 {
 	NDIlib_metadata_frame_t MetadataFrame;
-	NDIlib_frame_type_e FrameType = NDIlib_recv_capture(ReceiverInstance, nullptr, nullptr, &MetadataFrame, 0);
+	NDIlib_frame_type_e FrameType = NDIlib_recv_capture_v2(ReceiverInstance, nullptr, nullptr, &MetadataFrame, 0);
 
 	if (FrameType == NDIlib_frame_type_error)
 	{
@@ -740,8 +743,8 @@ void FNdiMediaPlayer::CaptureMetadataFrame()
 
 void FNdiMediaPlayer::CaptureVideoFrame()
 {
-	NDIlib_video_frame_t VideoFrame;
-	NDIlib_frame_type_e FrameType = NDIlib_recv_capture(ReceiverInstance, &VideoFrame, nullptr, nullptr, 0);
+	NDIlib_video_frame_v2_t VideoFrame;
+	NDIlib_frame_type_e FrameType = NDIlib_recv_capture_v2(ReceiverInstance, &VideoFrame, nullptr, nullptr, 0);
 
 	if (FrameType == NDIlib_frame_type_error)
 	{
@@ -758,11 +761,11 @@ void FNdiMediaPlayer::CaptureVideoFrame()
 	FScopeLock Lock(&CriticalSection);
 	ProcessVideoFrame(VideoFrame);
 
-	NDIlib_recv_free_video(ReceiverInstance, &VideoFrame);
+	NDIlib_recv_free_video_v2(ReceiverInstance, &VideoFrame);
 }
 
 
-void FNdiMediaPlayer::ProcessAudioFrame(const NDIlib_audio_frame_t& AudioFrame)
+void FNdiMediaPlayer::ProcessAudioFrame(const NDIlib_audio_frame_v2_t& AudioFrame)
 {
 	LastAudioChannels = AudioFrame.no_channels;
 	LastAudioSampleRate = AudioFrame.sample_rate;
@@ -791,7 +794,7 @@ void FNdiMediaPlayer::ProcessAudioFrame(const NDIlib_audio_frame_t& AudioFrame)
 		AudioFrameInterleaved.p_data = new short[TotalSamples];
 	}
 
-	NDIlib_util_audio_to_interleaved_16s(&AudioFrame, &AudioFrameInterleaved);
+	NDIlib_util_audio_to_interleaved_16s_v2(&AudioFrame, &AudioFrameInterleaved);
 
 	// forward to sink
 	static int64 SamplesReceived = 0;
@@ -802,7 +805,7 @@ void FNdiMediaPlayer::ProcessAudioFrame(const NDIlib_audio_frame_t& AudioFrame)
 }
 
 
-void FNdiMediaPlayer::ProcessVideoFrame(const NDIlib_video_frame_t& VideoFrame)
+void FNdiMediaPlayer::ProcessVideoFrame(const NDIlib_video_frame_v2_t& VideoFrame)
 {
 	LastBufferDim = FIntPoint(VideoFrame.line_stride_in_bytes / 4, VideoFrame.yres);
 	LastVideoDim = FIntPoint(VideoFrame.xres, VideoFrame.yres);
@@ -853,7 +856,7 @@ void FNdiMediaPlayer::UpdateAudioSampler()
 /* FNdiMediaPlayer implementation
  *****************************************************************************/
 
-void FNdiMediaPlayer::HandleAudioSamplerSample(const NDIlib_audio_frame_t& AudioFrame)
+void FNdiMediaPlayer::HandleAudioSamplerSample(const NDIlib_audio_frame_v2_t& AudioFrame)
 {
 	FScopeLock Lock(&CriticalSection);
 	ProcessAudioFrame(AudioFrame);

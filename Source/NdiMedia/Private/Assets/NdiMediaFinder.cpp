@@ -65,10 +65,10 @@ bool UNdiMediaFinder::GetSources(TArray<FNdiMediaSourceId>& OutSources) const
 		return false;
 	}
 
-	int NumSources = 0;
-	const NDIlib_source_t* Sources = NDIlib_find_get_sources(FindInstance, &NumSources, 0);
+	uint32_t NumSources = 0;
+	const NDIlib_source_t* Sources = NDIlib_find_get_current_sources(FindInstance, &NumSources);
 
-	for (int SourceIndex = 0; SourceIndex < NumSources; ++SourceIndex)
+	for (uint32_t SourceIndex = 0; SourceIndex < NumSources; ++SourceIndex)
 	{
 		const NDIlib_source_t& Source = Sources[SourceIndex];
 		OutSources.Add(FNdiMediaSourceId(
@@ -100,7 +100,7 @@ bool UNdiMediaFinder::Initialize()
 		FindCreate.p_groups = TCHAR_TO_ANSI(*GroupsString);
 	}
 
-	FindInstance = NDIlib_find_create2(&FindCreate);
+	FindInstance = NDIlib_find_create_v2(&FindCreate);
 
 	if (FindInstance == nullptr)
 	{

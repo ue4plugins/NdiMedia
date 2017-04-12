@@ -23,6 +23,7 @@
 
 // Is this library being compiled, or imported by another application.
 #ifdef _WIN32
+#define PROCESSINGNDILIB_DEPRECATED __declspec(deprecated)
 #ifdef PROCESSINGNDILIB_EXPORTS
 #ifdef __cplusplus
 #define PROCESSINGNDILIB_API extern "C" __declspec(dllexport)
@@ -44,6 +45,7 @@
 #endif
 #endif
 #else
+#define PROCESSINGNDILIB_DEPRECATED
 #ifdef __cplusplus
 #define PROCESSINGNDILIB_API extern "C" __attribute((visibility("default")))
 #else
@@ -54,6 +56,7 @@
 // Data structures shared by multiple SDKs
 #include "Processing.NDI.compat.h"
 #include "Processing.NDI.structs.h"
+#include "Processing.NDI.structs_deprecated.h"
 
 // This is not actually required, but will start and end the libraries which might get
 // you slightly better performance in some cases. In general it is more "correct" to 
@@ -71,10 +74,7 @@ void NDIlib_destroy(void);
 PROCESSINGNDILIB_API
 const char* NDIlib_version(void);
 
-// Recover whether the current CPU in the system is capable of running NDILib. Currently
-// NDILib requires SSE4.1 https://en.wikipedia.org/wiki/SSE4 Creating devices when your 
-// CPU is not capable will return NULL and not crash. This function is provided to help
-// understand why they cannot be created or warn users before they run.
+// Recover whether the current CPU in the system is capable of running NDILib.
 PROCESSINGNDILIB_API
 bool NDIlib_is_supported_CPU(void);
 
