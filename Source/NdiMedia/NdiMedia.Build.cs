@@ -65,11 +65,12 @@ namespace UnrealBuildTool.Rules
             }
             else if (Target.Platform == UnrealTargetPlatform.Linux)
 			{
-                string LibDir = Path.Combine(NdiDir, "lib", "linux");
-                string LibPath = Path.Combine(LibDir, "x86_64-linux-gnu-5.4");
+                string LibDir = Path.Combine(NdiDir, "lib", "linux", "x86_64-linux-gnu-5.4");
+                string LibPath = Path.Combine(LibDir, "libndi.a");
 
-                RuntimeDependencies.Add(new RuntimeDependency(LibPath));
-			}
+                PublicAdditionalLibraries.Add(LibPath);
+                PublicAdditionalLibraries.Add("stdc++");
+            }
 			else if (Target.Platform == UnrealTargetPlatform.Mac)
 			{
                 string LibDir = Path.Combine(NdiDir, "lib", "apple", "x64");
