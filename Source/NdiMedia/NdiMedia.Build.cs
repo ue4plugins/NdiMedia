@@ -67,19 +67,21 @@ namespace UnrealBuildTool.Rules
 			{
                 string LibDir = Path.Combine(NdiDir, "lib", "linux", "x86_64-linux-gnu-5.4");
                 string LibPath = Path.Combine(LibDir, "libndi.a");
+                string DllPath = Path.Combine(LibDir, "libndi.so.1.0.1");
 
                 PublicAdditionalLibraries.Add(LibPath);
                 PublicAdditionalLibraries.Add("stdc++");
+                RuntimeDependencies.Add(new RuntimeDependency(DllPath));
             }
 			else if (Target.Platform == UnrealTargetPlatform.Mac)
 			{
                 string LibDir = Path.Combine(NdiDir, "lib", "apple", "x64");
-                string LibPath = Path.Combine(LibDir, "libndi.dylib");
+                string DllPath = Path.Combine(LibDir, "libndi.dylib");
 
                 PublicLibraryPaths.Add(LibDir);
-                PublicAdditionalLibraries.Add(LibPath);
-                PublicDelayLoadDLLs.Add(LibPath);
-                RuntimeDependencies.Add(new RuntimeDependency(LibPath));
+                PublicAdditionalLibraries.Add(DllPath);
+                PublicDelayLoadDLLs.Add(DllPath);
+                RuntimeDependencies.Add(new RuntimeDependency(DllPath));
 			}
 			else if (Target.Platform == UnrealTargetPlatform.Win32)
 			{
