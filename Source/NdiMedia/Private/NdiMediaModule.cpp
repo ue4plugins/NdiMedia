@@ -31,7 +31,7 @@ public:
 
 	//~ INdiMediaModule interface
 
-	virtual TSharedPtr<IMediaPlayer> CreatePlayer() override
+	virtual TSharedPtr<IMediaPlayer, ESPMode::ThreadSafe> CreatePlayer() override
 	{
 		if (!Initialized)
 		{
