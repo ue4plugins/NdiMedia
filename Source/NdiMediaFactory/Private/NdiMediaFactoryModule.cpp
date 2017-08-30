@@ -1,9 +1,8 @@
-// Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
+// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "CoreMinimal.h"
 #include "IMediaPlayerFactory.h"
 #include "IMediaModule.h"
-#include "INdiMediaModule.h"
 #include "ModuleInterface.h"
 #include "ModuleManager.h"
 #include "UObject/Class.h"
@@ -15,6 +14,8 @@
 	#include "ISettingsSection.h"
 	#include "NdiMediaSettings.h"
 #endif
+
+#include "../../NdiMedia/Public/INdiMediaModule.h"
 
 
 #define LOCTEXT_NAMESPACE "FNdiMediaFactoryModule"
@@ -31,7 +32,7 @@ public:
 
 	//~ IMediaPlayerFactory interface
 
-	virtual bool CanPlayUrl(const FString& Url, const IMediaOptions& Options, TArray<FText>* OutWarnings, TArray<FText>* OutErrors) const override
+	virtual bool CanPlayUrl(const FString& Url, const IMediaOptions* /*Options*/, TArray<FText>* /*OutWarnings*/, TArray<FText>* OutErrors) const override
 	{
 		FString Scheme;
 		FString Location;
@@ -60,10 +61,10 @@ public:
 		return true;
 	}
 
-	virtual TSharedPtr<IMediaPlayer, ESPMode::ThreadSafe> CreatePlayer() override
+	virtual TSharedPtr<IMediaPlayer, ESPMode::ThreadSafe> CreatePlayer(IMediaEventSink& EventSink) override
 	{
 		auto NdiMediaModule = FModuleManager::LoadModulePtr<INdiMediaModule>("NdiMedia");
-		return (NdiMediaModule != nullptr) ? NdiMediaModule->CreatePlayer() : nullptr;
+		return (NdiMediaModule != nullptr) ? NdiMediaModule->CreatePlayer(EventSink) : nullptr;
 	}
 
 	virtual FText GetDisplayName() const override
@@ -80,6 +81,16 @@ public:
 	virtual const TArray<FString>& GetSupportedPlatforms() const override
 	{
 		return SupportedPlatforms;
+	}
+
+	virtual bool SupportsFeature(EMediaFeature Feature) const override
+	{
+		return ((Feature == EMediaFeature::AudioSamples) ||
+				(Feature == EMediaFeature::AudioTracks) ||
+				(Feature == EMediaFeature::MetadataTracks) ||
+				(Feature == EMediaFeature::VideoSamples) ||
+				(Feature == EMediaFeature::VideoTracks));
+
 	}
 
 public:

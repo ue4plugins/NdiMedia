@@ -2,12 +2,12 @@
 	"FileVersion" : 3,
 	
 	"FriendlyName" : "NDI Media Player",
-	"Version" : 5,
-	"VersionName" : "5.0",
+	"Version" : 6,
+	"VersionName" : "6.0",
 	"CreatedBy" : "Epic Games Inc",
 	"CreatedByURL" : "http://epicgames.com",
 	"DocsURL" : "https://github.com/ue4plugins/NdiMedia",
-	"EngineVersion" : "4.17.0",
+	"EngineVersion" : "4.18.0",
 	"Description" : "Implements a media player using Newtek's Network Device Interface (NDI).",
 	"Category" : "Media Players",
 	"CanContainContent" : false,
@@ -24,6 +24,11 @@
 		},
 		{
 			"Name" : "NdiMediaEditor",
+			"Type" : "Editor",
+			"LoadingPhase" : "PostEngineInit"
+		},
+		{
+			"Name" : "NdiMediaFactory",
 			"Type" : "Editor",
 			"LoadingPhase" : "PostEngineInit"
 		},

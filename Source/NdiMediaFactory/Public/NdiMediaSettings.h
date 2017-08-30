@@ -1,8 +1,8 @@
-// Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
+// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "Containers/UnrealString.h"
 #include "UObject/ObjectMacros.h"
 #include "UObject/Object.h"
 
@@ -10,7 +10,7 @@
 
 
 /**
- * Settings for the NdiMedia module.
+ * Settings for the NdiMedia plug-in.
  */
 UCLASS(config=Engine)
 class NDIMEDIAFACTORY_API UNdiMediaSettings

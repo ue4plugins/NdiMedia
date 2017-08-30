@@ -1,4 +1,4 @@
-// Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
+// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 namespace UnrealBuildTool.Rules
 {
@@ -6,9 +6,9 @@ namespace UnrealBuildTool.Rules
 	{
 		public NdiMediaEditor(ReadOnlyTargetRules Target) : base(Target)
 		{
-            PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+			PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-            PrivateDependencyModuleNames.AddRange(
+			PrivateDependencyModuleNames.AddRange(
 				new string[] {
 					"Core",
 					"CoreUObject",
@@ -18,22 +18,19 @@ namespace UnrealBuildTool.Rules
 					"Slate",
 					"SlateCore",
 					"UnrealEd",
-                }
-			);
+				});
 
 			PrivateIncludePathModuleNames.AddRange(
-				new string [] {
+				new string[] {
 					"AssetTools",
-				}
-			);
+				});
 
 			PrivateIncludePaths.AddRange(
 				new string[] {
 					"NdiMediaEditor/Private",
 					"NdiMediaEditor/Private/Customizations",
 					"NdiMediaEditor/Private/Factories",
-				}
-			);
+				});
 		}
 	}
 }

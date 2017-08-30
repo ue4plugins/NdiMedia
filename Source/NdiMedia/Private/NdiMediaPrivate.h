@@ -1,4 +1,4 @@
-// Copyright 2015 Headcrash Industries LLC. All Rights Reserved.
+// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -39,6 +39,9 @@ namespace NdiMedia
 
 	/** Name of the Progressive media option. */
 	static const FName ProgressiveOption("Progressive");
+
+	/** Name of the UseTimecode media option. */
+	static const FName UseTimecodeOption("UseTimecode");
 
 	/** Name of the VideoHeight media option. */
 	static const FName VideoHeightOption("VideoHeight");

@@ -1,9 +1,10 @@
-// Copyright 2015 Headcrash Industries LLC. All Rights Reserved.
+// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
-#include "INdiMediaModule.h"
 #include "NdiMediaPrivate.h"
 
-#include "ModuleManager.h"
+#include "Modules/ModuleManager.h"
+
+#include "INdiMediaModule.h"
 #include "Ndi.h"
 #include "NdiMediaFinder.h"
 #include "NdiMediaPlayer.h"
@@ -31,14 +32,13 @@ public:
 
 	//~ INdiMediaModule interface
 
-	virtual TSharedPtr<IMediaPlayer, ESPMode::ThreadSafe> CreatePlayer() override
+	virtual TSharedPtr<IMediaPlayer, ESPMode::ThreadSafe> CreatePlayer(IMediaEventSink& EventSink) override
 	{
 		if (!Initialized)
 		{
 			return nullptr;
 		}
-
-		return MakeShareable(new FNdiMediaPlayer());
+		return MakeShared<FNdiMediaPlayer, ESPMode::ThreadSafe>(EventSink);
 	}
 
 public:
@@ -47,12 +47,14 @@ public:
 
 	virtual void StartupModule() override
 	{
+		// initialize NDI
 		if (!FNdi::Initialize())
 		{
 			UE_LOG(LogNdiMedia, Error, TEXT("Failed to initialize NDI"));
 			return;
 		}
 
+		// initialize NDI finder
 		GetMutableDefault<UNdiMediaFinder>()->Initialize();
 
 		Initialized = true;

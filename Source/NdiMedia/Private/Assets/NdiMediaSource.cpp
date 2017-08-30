@@ -1,4 +1,4 @@
-// Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
+// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "NdiMediaSource.h"
 #include "NdiMediaPrivate.h"
@@ -19,11 +19,23 @@ UNdiMediaSource::UNdiMediaSource()
 	, PreferredFrameRateNumerator(0)
 	, PreferredFrameRateDenominator(0)
 	, PreferredFrameFormat(ENdiMediaFrameFormatPreference::NoPreference)
+	, UseTimecode(false)
 { }
 
 
 /* IMediaOptions interface
  *****************************************************************************/
+
+bool UNdiMediaSource::GetMediaOption(const FName& Key, bool DefaultValue) const
+{
+	if (Key == NdiMedia::UseTimecodeOption)
+	{
+		return UseTimecode;
+	}
+
+	return Super::GetMediaOption(Key, DefaultValue);
+}
+
 
 FString UNdiMediaSource::GetMediaOption(const FName& Key, const FString& DefaultValue) const
 {
@@ -109,6 +121,7 @@ bool UNdiMediaSource::HasMediaOption(const FName& Key) const
 		(Key == NdiMedia::FrameRateDOption) ||
 		(Key == NdiMedia::FrameRateNOption) ||
 		(Key == NdiMedia::ProgressiveOption) ||
+		(Key == NdiMedia::UseTimecodeOption) ||
 		(Key == NdiMedia::VideoHeightOption) ||
 		(Key == NdiMedia::VideoWidthOption))
 	{
