@@ -140,7 +140,7 @@ FString FNdiMediaPlayer::GetInfo() const
 }
 
 
-FName FNdiMediaPlayer::GetName() const
+FName FNdiMediaPlayer::GetPlayerName() const
 {
 	static FName PlayerName(TEXT("NdiMedia"));
 	return PlayerName;
@@ -370,8 +370,8 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions* Options)
 	// send custom metadata
 	FString CustomMetadata = Settings->CustomMetaData;
 	{
-		CustomMetadata.Trim();
-		CustomMetadata.TrimTrailing();
+		CustomMetadata.TrimStartInline();
+		CustomMetadata.TrimEndInline();
 	}
 
 	if (!CustomMetadata.IsEmpty())
@@ -406,7 +406,7 @@ void FNdiMediaPlayer::TickAudio()
 }
 
 
-void FNdiMediaPlayer::TickFetch(FTimespan DeltaTime)
+void FNdiMediaPlayer::TickFetch(FTimespan DeltaTime, FTimespan /*Timecode*/)
 {
 	if (ReceiverInstance != nullptr)
 	{
@@ -415,7 +415,7 @@ void FNdiMediaPlayer::TickFetch(FTimespan DeltaTime)
 }
 
 
-void FNdiMediaPlayer::TickInput(FTimespan DeltaTime)
+void FNdiMediaPlayer::TickInput(FTimespan DeltaTime, FTimespan Timecode)
 {
 	if (ReceiverInstance == nullptr)
 	{
@@ -434,7 +434,7 @@ void FNdiMediaPlayer::TickInput(FTimespan DeltaTime)
 
 	if (!UseFrameTimecode)
 	{
-//		CurrentTime = Timecode;
+		CurrentTime = Timecode;
 	}
 }
 

@@ -72,7 +72,7 @@ public:
 		return LOCTEXT("MediaPlayerDisplayName", "Network Device Interface");
 	}
 
-	virtual FName GetName() const override
+	virtual FName GetPlayerName() const override
 	{
 		static FName PlayerName(TEXT("NdiMedia"));
 		return PlayerName;
