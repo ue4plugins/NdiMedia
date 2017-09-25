@@ -1,11 +1,13 @@
 #pragma once
 
-// NOTE : The following license applies to this file ONLY and not to the SDK as a whole. Please review the SDK documentation for
-// the description of the full license terms.
+// NOTE : The following MIT license applies to this file ONLY and not to the SDK as a whole. Please review the SDK documentation 
+// for the description of the full license terms, which are also provided in the file "NDI License Agreement.pdf" within the SDK or 
+// online at http://new.tk/ndisdk_license/. Your use of any part of this SDK is acknowledgment that you agree to the SDK license 
+// terms. THe full NDI SDK may be downloaded at https://www.newtek.com/ndi/sdk/
 //
 //***********************************************************************************************************************************************
 // 
-// Copyright(c) 2016 NewTek, inc
+// Copyright(c) 2014-2017 NewTek, inc
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
 // files(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, 
@@ -33,6 +35,10 @@ typedef struct NDIlib_routing_create_t
 
 	// What groups should this source be part of
 	const char* p_groups;
+
+#if NDILIB_CPP_DEFAULT_CONSTRUCTORS
+	NDIlib_routing_create_t(const char* p_ndi_name_ = NULL, const char* p_groups_ = NULL);
+#endif // NDILIB_CPP_DEFAULT_CONSTRUCTORS
 
 } NDIlib_routing_create_t;
 

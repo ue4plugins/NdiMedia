@@ -1,11 +1,13 @@
 #pragma once
 
-// NOTE : The following license applies to this file ONLY and not to the SDK as a whole. Please review the SDK documentation for
-// the description of the full license terms.
+// NOTE : The following MIT license applies to this file ONLY and not to the SDK as a whole. Please review the SDK documentation 
+// for the description of the full license terms, which are also provided in the file "NDI License Agreement.pdf" within the SDK or 
+// online at http://new.tk/ndisdk_license/. Your use of any part of this SDK is acknowledgment that you agree to the SDK license 
+// terms. THe full NDI SDK may be downloaded at https://www.newtek.com/ndi/sdk/
 //
 //***********************************************************************************************************************************************
 // 
-// Copyright(c) 2016 NewTek, inc
+// Copyright(c) 2014-2017 NewTek, inc
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
 // files(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, 
@@ -22,8 +24,8 @@
 //***********************************************************************************************************************************************
 
 //****************************************************************************************************************
-typedef struct NDIlib_v2
-{
+typedef struct NDIlib_v3
+{	// V1.5
 	bool(*NDIlib_initialize)(void);
 	void(*NDIlib_destroy)(void);
 	const char* (*NDIlib_version)(void);
@@ -66,34 +68,59 @@ typedef struct NDIlib_v2
 	void(*NDIlib_util_send_send_audio_interleaved_16s)(NDIlib_send_instance_t p_instance, const NDIlib_audio_frame_interleaved_16s_t* p_audio_data);
 	PROCESSINGNDILIB_DEPRECATED void(*NDIlib_util_audio_to_interleaved_16s)(const NDIlib_audio_frame_t* p_src, NDIlib_audio_frame_interleaved_16s_t* p_dst);
 	PROCESSINGNDILIB_DEPRECATED void(*NDIlib_util_audio_from_interleaved_16s)(const NDIlib_audio_frame_interleaved_16s_t* p_src, NDIlib_audio_frame_t* p_dst);
-
-	// Find for v2 functions
+	// V2
 	bool(*NDIlib_find_wait_for_sources)(NDIlib_find_instance_t p_instance, uint32_t timeout_in_ms);
 	const NDIlib_source_t* (*NDIlib_find_get_current_sources)(NDIlib_find_instance_t p_instance, uint32_t* p_no_sources);
 	PROCESSINGNDILIB_DEPRECATED void(*NDIlib_util_audio_to_interleaved_32f)(const NDIlib_audio_frame_t* p_src, NDIlib_audio_frame_interleaved_32f_t* p_dst);
 	PROCESSINGNDILIB_DEPRECATED void(*NDIlib_util_audio_from_interleaved_32f)(const NDIlib_audio_frame_interleaved_32f_t* p_src, NDIlib_audio_frame_t* p_dst);
 	void(*NDIlib_util_send_send_audio_interleaved_32f)(NDIlib_send_instance_t p_instance, const NDIlib_audio_frame_interleaved_32f_t* p_audio_data);
-
-	// V2.5 functions
+	// V3
 	void(*NDIlib_recv_free_video_v2)(NDIlib_recv_instance_t p_instance, const NDIlib_video_frame_v2_t* p_video_data);
 	void(*NDIlib_recv_free_audio_v2)(NDIlib_recv_instance_t p_instance, const NDIlib_audio_frame_v2_t* p_audio_data);
 	NDIlib_frame_type_e(*NDIlib_recv_capture_v2)(NDIlib_recv_instance_t p_instance, NDIlib_video_frame_v2_t* p_video_data, NDIlib_audio_frame_v2_t* p_audio_data, NDIlib_metadata_frame_t* p_metadata, uint32_t timeout_in_ms);             // The amount of time in milliseconds to wait for data.
 	void(*NDIlib_send_send_video_v2)(NDIlib_send_instance_t p_instance, const NDIlib_video_frame_v2_t* p_video_data);
 	void(*NDIlib_send_send_video_async_v2)(NDIlib_send_instance_t p_instance, const NDIlib_video_frame_v2_t* p_video_data);
 	void(*NDIlib_send_send_audio_v2)(NDIlib_send_instance_t p_instance, const NDIlib_audio_frame_v2_t* p_audio_data);
-
-	// The new interleaved audio flags
 	void(*NDIlib_util_audio_to_interleaved_16s_v2)(const NDIlib_audio_frame_v2_t* p_src, NDIlib_audio_frame_interleaved_16s_t* p_dst);
 	void(*NDIlib_util_audio_from_interleaved_16s_v2)(const NDIlib_audio_frame_interleaved_16s_t* p_src, NDIlib_audio_frame_v2_t* p_dst);
 	void(*NDIlib_util_audio_to_interleaved_32f_v2)(const NDIlib_audio_frame_v2_t* p_src, NDIlib_audio_frame_interleaved_32f_t* p_dst);
 	void(*NDIlib_util_audio_from_interleaved_32f_v2)(const NDIlib_audio_frame_interleaved_32f_t* p_src, NDIlib_audio_frame_v2_t* p_dst);
+	// V3.01
+	void(*NDIlib_recv_free_string)(NDIlib_recv_instance_t p_instance, const char* p_string);
+	bool(*NDIlib_recv_ptz_is_supported)(NDIlib_recv_instance_t p_instance);
+	bool(*NDIlib_recv_recording_is_supported)(NDIlib_recv_instance_t p_instance);
+	const char*(*NDIlib_recv_get_web_control)(NDIlib_recv_instance_t p_instance);
+	bool(*NDIlib_recv_ptz_zoom)(NDIlib_recv_instance_t p_instance, const float zoom_value);
+	bool(*NDIlib_recv_ptz_zoom_speed)(NDIlib_recv_instance_t p_instance, const float zoom_speed);
+	bool(*NDIlib_recv_ptz_pan_tilt)(NDIlib_recv_instance_t p_instance, const float pan_value, const float tilt_value);
+	bool(*NDIlib_recv_ptz_pan_tilt_speed)(NDIlib_recv_instance_t p_instance, const float pan_speed, const float tilt_speed);
+	bool(*NDIlib_recv_ptz_store_preset)(NDIlib_recv_instance_t p_instance, const int preset_no);
+	bool(*NDIlib_recv_ptz_recall_preset)(NDIlib_recv_instance_t p_instance, const int preset_no, const float speed);
+	bool(*NDIlib_recv_ptz_auto_focus)(NDIlib_recv_instance_t p_instance);
+	bool(*NDIlib_recv_ptz_focus)(NDIlib_recv_instance_t p_instance, const float focus_value);
+	bool(*NDIlib_recv_ptz_focus_speed)(NDIlib_recv_instance_t p_instance, const float focus_speed);
+	bool(*NDIlib_recv_ptz_white_balance_auto)(NDIlib_recv_instance_t p_instance);
+	bool(*NDIlib_recv_ptz_white_balance_indoor)(NDIlib_recv_instance_t p_instance);
+	bool(*NDIlib_recv_ptz_white_balance_outdoor)(NDIlib_recv_instance_t p_instance);
+	bool(*NDIlib_recv_ptz_white_balance_oneshot)(NDIlib_recv_instance_t p_instance);
+	bool(*NDIlib_recv_ptz_white_balance_manual)(NDIlib_recv_instance_t p_instance, const float red, const float blue);
+	bool(*NDIlib_recv_ptz_exposure_auto)(NDIlib_recv_instance_t p_instance);
+	bool(*NDIlib_recv_ptz_exposure_manual)(NDIlib_recv_instance_t p_instance, const float exposure_level);
+	bool(*NDIlib_recv_recording_start)(NDIlib_recv_instance_t p_instance, const char* p_filename_hint);
+	bool(*NDIlib_recv_recording_stop)(NDIlib_recv_instance_t p_instance);
+	bool(*NDIlib_recv_recording_set_audio_level)(NDIlib_recv_instance_t p_instance, const float level_dB);
+	bool(*NDIlib_recv_recording_is_recording)(NDIlib_recv_instance_t p_instance);
+	const char*(*NDIlib_recv_recording_get_filename)(NDIlib_recv_instance_t p_instance);
+	const char*(*NDIlib_recv_recording_get_error)(NDIlib_recv_instance_t p_instance);
+	bool(*NDIlib_recv_recording_get_times)(NDIlib_recv_instance_t p_instance, NDIlib_recv_recording_time_t* p_times);
 
-	// This leaves us a load of space that is useful to allow us to expand the API without breaking compatability. It does
-	// not matter that this struct is actually pretty big because there is only ever one instance of it around.
-	void(*NDIlib_reserved[500])(void);
+}	NDIlib_v3;
 
-} NDIlib_v2;
+typedef struct NDIlib_v3 NDIlib_v2;
 
 // Load the library
 PROCESSINGNDILIB_API
+const NDIlib_v3* NDIlib_v3_load(void);
+
+PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
 const NDIlib_v2* NDIlib_v2_load(void);

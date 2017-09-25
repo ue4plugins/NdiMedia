@@ -1,11 +1,13 @@
 #pragma once
 
-// NOTE : The following license applies to this file ONLY and not to the SDK as a whole. Please review the SDK documentation for
-// the description of the full license terms.
+// NOTE : The following MIT license applies to this file ONLY and not to the SDK as a whole. Please review the SDK documentation 
+// for the description of the full license terms, which are also provided in the file "NDI License Agreement.pdf" within the SDK or 
+// online at http://new.tk/ndisdk_license/. Your use of any part of this SDK is acknowledgment that you agree to the SDK license 
+// terms. THe full NDI SDK may be downloaded at https://www.newtek.com/ndi/sdk/
 //
 //***********************************************************************************************************************************************
 // 
-// Copyright(c) 2016 NewTek, inc
+// Copyright(c) 2014-2017 NewTek, inc
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
 // files(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, 
@@ -54,6 +56,11 @@ typedef struct NDIlib_audio_frame_interleaved_16s_t
 	// The audio data, interleaved 16bpp
 	short* p_data;
 
+#if NDILIB_CPP_DEFAULT_CONSTRUCTORS
+	NDIlib_audio_frame_interleaved_16s_t(int sample_rate_ = 48000, int no_channels_ = 2, int no_samples_ = 0, int64_t timecode_ = NDIlib_send_timecode_synthesize,
+										 int reference_level_ = 0, short* p_data_ = NULL);
+#endif // NDILIB_CPP_DEFAULT_CONSTRUCTORS
+
 } NDIlib_audio_frame_interleaved_16s_t;
 
 // This describes an audio frame
@@ -72,6 +79,11 @@ typedef struct NDIlib_audio_frame_interleaved_32f_t
 	
 	// The audio data, interleaved 32bpp
 	float* p_data;
+
+#if NDILIB_CPP_DEFAULT_CONSTRUCTORS
+	NDIlib_audio_frame_interleaved_32f_t(int sample_rate_ = 48000, int no_channels_ = 2, int no_samples_ = 0, int64_t timecode_ = NDIlib_send_timecode_synthesize,
+										 float* p_data_ = NULL);
+#endif // NDILIB_CPP_DEFAULT_CONSTRUCTORS
 
 } NDIlib_audio_frame_interleaved_32f_t;
 

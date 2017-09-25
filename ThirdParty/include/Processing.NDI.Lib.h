@@ -1,11 +1,13 @@
 #pragma once
 
-// NOTE : The following license applies to this file ONLY and not to the SDK as a whole. Please review the SDK documentation for
-// the description of the full license terms.
+// NOTE : The following MIT license applies to this file ONLY and not to the SDK as a whole. Please review the SDK documentation 
+// for the description of the full license terms, which are also provided in the file "NDI License Agreement.pdf" within the SDK or 
+// online at http://new.tk/ndisdk_license/. Your use of any part of this SDK is acknowledgment that you agree to the SDK license 
+// terms. THe full NDI SDK may be downloaded at https://www.newtek.com/ndi/sdk/
 //
 //***********************************************************************************************************************************************
 // 
-// Copyright(c) 2016 NewTek, inc
+// Copyright(c) 2014-2017 NewTek, inc
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation 
 // files(the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, 
@@ -38,13 +40,26 @@
 #endif
 #ifdef _MSC_VER
 #ifdef _WIN64
-#pragma comment(lib, "Processing.NDI.Lib.x64.lib")
+#define NDILIB_LIBRARY_NAME			"Processing.NDI.Lib.x64.dll"
+#define NDILIB_REDIST_FOLDER		"NDI_RUNTIME_DIR_V3"
+#define NDILIB_REDIST_URL			"http://new.tk/NDIRedistV3"
 #else
-#pragma comment(lib, "Processing.NDI.Lib.x86.lib")
+#define NDILIB_LIBRARY_NAME			"Processing.NDI.Lib.x86.dll"
+#define NDILIB_REDIST_FOLDER		"NDI_RUNTIME_DIR_V3"
+#define NDILIB_REDIST_URL			"http://new.tk/NDIRedistV3"
 #endif
 #endif
 #endif
 #else
+#ifdef __APPLE__
+#define NDILIB_LIBRARY_NAME			"libndi.3.dylib"
+#define NDILIB_REDIST_FOLDER		"NDI_RUNTIME_DIR_V3"
+#define NDILIB_REDIST_URL			"http://new.tk/NDIRedistV3Apple"
+#else // __APPLE__
+#define NDILIB_LIBRARY_NAME			"libndi.so.3"
+#define NDILIB_REDIST_FOLDER		"NDI_RUNTIME_DIR_V3"
+#define NDILIB_REDIST_URL			""
+#endif // __APPLE__
 #define PROCESSINGNDILIB_DEPRECATED
 #ifdef __cplusplus
 #define PROCESSINGNDILIB_API extern "C" __attribute((visibility("default")))
@@ -52,6 +67,14 @@
 #define PROCESSINGNDILIB_API __attribute((visibility("default")))
 #endif
 #endif
+
+#ifndef NDILIB_CPP_DEFAULT_CONSTRUCTORS
+#ifdef __cplusplus
+#define NDILIB_CPP_DEFAULT_CONSTRUCTORS 1
+#else // __cplusplus
+#define NDILIB_CPP_DEFAULT_CONSTRUCTORS 0
+#endif // __cplusplus
+#endif // NDILIB_CPP_DEFAULT_CONSTRUCTORS
 
 // Data structures shared by multiple SDKs
 #include "Processing.NDI.compat.h"
@@ -89,3 +112,8 @@ bool NDIlib_is_supported_CPU(void);
 
 // Dynamic loading used for OSS libraries
 #include "Processing.NDI.DynamicLoad.h"
+
+// The C++ implemenrations
+#if NDILIB_CPP_DEFAULT_CONSTRUCTORS
+#include "Processing.NDI.Lib.cplusplus.h"
+#endif // NDILIB_CPP_DEFAULT_CONSTRUCTORS
