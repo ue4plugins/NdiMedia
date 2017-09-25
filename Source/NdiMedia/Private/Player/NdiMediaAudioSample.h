@@ -46,7 +46,7 @@ public:
 	{
 		FreeFrame();
 
-		if (ReceiverInstance == nullptr)
+		if (InReceiverInstance == nullptr)
 		{
 			return false;
 		}

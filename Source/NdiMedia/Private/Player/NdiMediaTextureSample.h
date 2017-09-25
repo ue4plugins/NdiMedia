@@ -40,6 +40,8 @@ public:
 	 */
 	bool Initialize(void* InReceiverInstance, const NDIlib_video_frame_v2_t& InFrame, EMediaTextureSampleFormat InSampleFormat, FTimespan InTime)
 	{
+		FreeFrame();
+
 		if ((InReceiverInstance == nullptr) || (InSampleFormat == EMediaTextureSampleFormat::Undefined))
 		{
 			return false;
@@ -75,7 +77,7 @@ public:
 
 	virtual FTimespan GetDuration() const override
 	{
-		return FTimespan::Zero();
+		return FTimespan(Frame.frame_rate_D * ETimespan::TicksPerSecond / Frame.frame_rate_N);
 	}
 
 	virtual EMediaTextureSampleFormat GetFormat() const override
