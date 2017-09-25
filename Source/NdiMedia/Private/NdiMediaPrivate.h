@@ -22,6 +22,9 @@ namespace NdiMedia
 	/** Name of the AudioChannels media option. */
 	static const FName AudioChannelsOption("AudioChannels");
 
+	/** Name of the AudioReferenceLevel media option. */
+	static const FName AudioReferenceLevelOption("AudioReferenceLevel");
+
 	/** Name of the AudioSampleRate media option. */
 	static const FName AudioSampleRateOption("AudioSampleRate");
 

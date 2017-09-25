@@ -223,12 +223,14 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions* Options)
 	{
 		Bandwidth = Options->GetMediaOption(NdiMedia::BandwidthOption, (int64)NDIlib_recv_bandwidth_highest);
 		ColorFormat = (NDIlib_recv_color_format_e)Options->GetMediaOption(NdiMedia::ColorFormatOption, 0LL);
+		ReceiveAudioReferenceLevel = (int32)Options->GetMediaOption(NdiMedia::AudioReferenceLevelOption, 5LL);
 		UseFrameTimecode = Options->GetMediaOption(NdiMedia::UseTimecodeOption, false);
 	}
 	else
 	{
 		Bandwidth = (int64)NDIlib_recv_bandwidth_highest;
 		ColorFormat = NDIlib_recv_color_format_e_UYVY_BGRA;
+		ReceiveAudioReferenceLevel = 5;
 		UseFrameTimecode = false;
 	}
 
@@ -747,7 +749,7 @@ void FNdiMediaPlayer::ProcessAudio()
 			{
 				auto AudioSample = AudioSamplePool->AcquireShared();
 				
-				if (AudioSample->Initialize(ReceiverInstance, AudioFrame, CurrentTime))
+				if (AudioSample->Initialize(ReceiverInstance, AudioFrame, ReceiveAudioReferenceLevel, CurrentTime))
 				{
 					Samples->AddAudio(AudioSample);
 				}
@@ -806,7 +808,7 @@ void FNdiMediaPlayer::ProcessMetadataAndVideo()
 		}
 		else if (FrameType == NDIlib_frame_type_video)
 		{
-			LastVideoDim = FIntPoint(VideoFrame.line_stride_in_bytes / 4, VideoFrame.yres);
+			LastVideoDim = FIntPoint(VideoFrame.xres, VideoFrame.yres);
 			LastVideoFrameRate = (float)VideoFrame.frame_rate_N / (float)VideoFrame.frame_rate_D;
 			LastVideoBitRate = (uint64)(VideoFrame.line_stride_in_bytes * VideoFrame.yres * LastVideoFrameRate);
 

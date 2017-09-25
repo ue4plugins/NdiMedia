@@ -61,13 +61,28 @@ class NDIMEDIA_API UNdiMediaSource
 
 public:
 
+	/**
+	 * Reference level for received audio (in dB; default = 5).
+	 *
+	 * @note UE4 adds its own headroom to audio samples, so the 20 dB recommended by Newtek
+	 * will result in the audio output level being too low.
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Audio)
+	int32 AudioReferenceLevel;
+
+	/** Preferred audio sample rate (in samples per second, 0 = no preference, default = 48000). */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Audio, AdvancedDisplay)
+	int32 PreferredAudioSampleRate;
+
+	/** Preferred number of audio channels (0 = no preference, default = 2). */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Audio, AdvancedDisplay)
+	int32 PreferredNumAudioChannels;
+
+public:
+
 	/** Desired bandwidth for the NDI stream (default = Highest). */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
 	ENdiMediaBandwidth Bandwidth;
-
-	/** Desired color format of input video frames (default = UYVY). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
-	ENdiMediaColorFormat ColorFormat;
 
 	/**
 	 * The IP address and port number of the NDI source to be played, i.e "1.2.3.4:5678".
@@ -90,39 +105,35 @@ public:
 
 public:
 
-	/** Preferred number of audio channels (0 = no preference, default = 2). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences, AdvancedDisplay)
-	int32 PreferredNumAudioChannels;
-
-	/** Preferred audio sample rate (in samples per second, 0 = no preference, default = 48000). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences, AdvancedDisplay)
-	int32 PreferredAudioSampleRate;
-
-	/** Preferred width of the video stream (in pixels, 0 = no preference). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences, AdvancedDisplay)
-	int32 PreferredVideoWidth;
-
-	/** Preferred height of the video stream (in pixels, 0 = no preference). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences, AdvancedDisplay)
-	int32 PreferredVideoHeight;
-
-	/** Numerator of preferred video frame rate, i.e. '30000' in 30000/1001 = 29.97 fps (0 = no preference). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences, AdvancedDisplay)
-	int32 PreferredFrameRateNumerator;
-
-	/** Denominator of preferred video frame rate, i.e. '1001' in 30000/1001 = 29.97 fps (0 = no preference). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences, AdvancedDisplay)
-	int32 PreferredFrameRateDenominator;
-
-	/** Preferred video frame format type (default = NoPreference). */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Preferences)
-	ENdiMediaFrameFormatPreference PreferredFrameFormat;
-
-public:
-
 	/** Whether to use the time code embedded in the NDI stream when time code locking is enabled in the Engine. */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Synchronization)
 	bool UseTimecode;
+
+public:
+
+	/** Desired color format of input video frames (default = UYVY). */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Video)
+	ENdiMediaColorFormat ColorFormat;
+
+	/** Preferred video frame format type (default = NoPreference). */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Video, AdvancedDisplay)
+	ENdiMediaFrameFormatPreference PreferredFrameFormat;
+
+	/** Numerator of preferred video frame rate, i.e. '30000' in 30000/1001 = 29.97 fps (0 = no preference). */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Video, AdvancedDisplay)
+	int32 PreferredFrameRateNumerator;
+
+	/** Denominator of preferred video frame rate, i.e. '1001' in 30000/1001 = 29.97 fps (0 = no preference). */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Video, AdvancedDisplay)
+	int32 PreferredFrameRateDenominator;
+
+	/** Preferred width of the video stream (in pixels, 0 = no preference). */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Video, AdvancedDisplay)
+	int32 PreferredVideoWidth;
+
+	/** Preferred height of the video stream (in pixels, 0 = no preference). */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Video, AdvancedDisplay)
+	int32 PreferredVideoHeight;
 
 public:
 

@@ -38,6 +38,7 @@ public:
 		{
 			return nullptr;
 		}
+
 		return MakeShared<FNdiMediaPlayer, ESPMode::ThreadSafe>(EventSink);
 	}
 

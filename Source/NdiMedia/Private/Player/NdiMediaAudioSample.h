@@ -22,6 +22,7 @@ public:
 		, FrameInterleaved({ 0 })
 		, FrameInterleavedSize(0)
 		, ReceiverInstance(nullptr)
+		, ReferenceLevel(0)
 		, Time(FTimespan::Zero())
 	{ }
 
@@ -39,10 +40,11 @@ public:
 	 *
 	 * @param InReceiverInstance The receiver instance that generated the sample.
 	 * @param InFrame The audio frame data.
+	 * @param InReferenceLevel Reference level (in dB).
 	 * @param InTime The sample time (in the player's own clock).
 	 * @result true on success, false otherwise.
 	 */
-	bool Initialize(void* InReceiverInstance, const NDIlib_audio_frame_v2_t& InFrame, FTimespan InTime)
+	bool Initialize(void* InReceiverInstance, const NDIlib_audio_frame_v2_t& InFrame, int32 InReferenceLevel, FTimespan InTime)
 	{
 		FreeFrame();
 
@@ -59,6 +61,7 @@ public:
 		Duration = ETimespan::TicksPerSecond * InFrame.no_samples / InFrame.sample_rate;
 		Frame = InFrame;
 		ReceiverInstance = InReceiverInstance;
+		ReferenceLevel = InReferenceLevel;
 		Time = InTime;
 
 		return true;
@@ -88,7 +91,7 @@ public:
 			// allocate frame buffer
 			if (FrameInterleaved.p_data == nullptr)
 			{
-				FrameInterleaved.reference_level = 20;
+				FrameInterleaved.reference_level = ReferenceLevel;
 				FrameInterleaved.p_data = new short[TotalSamples];
 				FrameInterleavedSize = TotalSamples;
 			}
@@ -179,6 +182,9 @@ private:
 
 	/** The receiver instance that generated this sample. */
 	void* ReceiverInstance;
+
+	/** Reference level (in dB). */
+	int32 ReferenceLevel;
 
 	/** Sample time. */
 	FTimespan Time;

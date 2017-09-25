@@ -172,6 +172,9 @@ private:
 	/** Whether the player is paused. */
 	bool Paused;
 
+	/** Reference level for received audio (cached from settings). */
+	int32 ReceiveAudioReferenceLevel;
+
 	/** The current receiver instance. */
 	void* ReceiverInstance;
 
