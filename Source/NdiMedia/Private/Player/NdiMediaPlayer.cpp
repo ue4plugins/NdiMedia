@@ -7,6 +7,7 @@
 #include "IMediaEventSink.h"
 #include "IMediaOptions.h"
 #include "MediaSamples.h"
+#include "Misc/App.h"
 #include "Misc/ScopeLock.h"
 #include "UObject/Class.h"
 #include "UObject/UObjectGlobals.h"
@@ -215,15 +216,17 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions* Options)
 
 	FString SourceStr = Url.RightChop(6);
 
-	// determine sink format
+	// determine playback options
 	int64 Bandwidth;
 	NDIlib_recv_color_format_e ColorFormat;
+	FString ReceiverName;
 
 	if (Options != nullptr)
 	{
 		Bandwidth = Options->GetMediaOption(NdiMedia::BandwidthOption, (int64)NDIlib_recv_bandwidth_highest);
 		ColorFormat = (NDIlib_recv_color_format_e)Options->GetMediaOption(NdiMedia::ColorFormatOption, 0LL);
 		ReceiveAudioReferenceLevel = (int32)Options->GetMediaOption(NdiMedia::AudioReferenceLevelOption, 5LL);
+		ReceiverName = Options->GetMediaOption(NdiMedia::ReceiverName, FString());
 		UseFrameTimecode = Options->GetMediaOption(NdiMedia::UseTimecodeOption, false);
 	}
 	else
@@ -249,6 +252,13 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions* Options)
 		ColorFormat = NDIlib_recv_color_format_e_UYVY_BGRA;
 		VideoSampleFormat = EMediaTextureSampleFormat::CharUYVY;
 	}
+
+	if (ReceiverName.IsEmpty())
+	{
+		ReceiverName = FString::Printf(TEXT("%p"), this);
+	}
+
+	const FString UniqueReceiverName = FString::Printf(TEXT("%s %s %s"), *FApp::GetName(), *FApp::GetInstanceName(), *ReceiverName);
 
 	// create receiver
 	NDIlib_source_t Source;
@@ -276,7 +286,7 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions* Options)
 		RcvCreateDesc.color_format = ColorFormat;
 		RcvCreateDesc.bandwidth = (NDIlib_recv_bandwidth_e)Bandwidth;
 		RcvCreateDesc.allow_video_fields = true;
-		RcvCreateDesc.p_ndi_name = "UE4";
+		RcvCreateDesc.p_ndi_name = TCHAR_TO_ANSI(*UniqueReceiverName);
 	};
 	
 	{

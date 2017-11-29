@@ -52,6 +52,10 @@ FString UNdiMediaSource::GetMediaOption(const FName& Key, const FString& Default
 			return TEXT("true");
 		}
 	}
+	else if (Key == NdiMedia::ReceiverName)
+	{
+		return ReceiverName;
+	}
 
 	return Super::GetMediaOption(Key, DefaultValue);
 }

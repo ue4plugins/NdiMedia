@@ -85,6 +85,23 @@ public:
 	ENdiMediaBandwidth Bandwidth;
 
 	/**
+	 * Name of the NDI receive channel.
+	 *
+	 * This is the name given to the channel that receives the NDI stream in this
+	 * application. This string is combined with the application name, the computer
+	 * name, and the process ID. If not specified, the media player's ID will be used.
+	 *
+	 * If you specify this string, make sure that you do not use this media source in
+	 * more than one media player at a time. Otherwise the receiver name is duplicated
+	 * on the network, and it will be impossible to distinguish the receivers.
+	 *
+	 * Example, a receiver name of "Channel-1" may be advertised on the NDI network
+	 * as "MyGame MyComputerName-12345 Channel-1".
+	 */
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=NDI, AdvancedDisplay)
+	FString ReceiverName;
+
+	/**
 	 * The IP address and port number of the NDI source to be played, i.e "1.2.3.4:5678".
 	 *
 	 * If you leave this empty, then the SourceName setting is used instead.
