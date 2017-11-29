@@ -95,7 +95,7 @@ bool NDIlib_recv_ptz_exposure_manual(NDIlib_recv_instance_t p_instance, const fl
 
 //**************************************************************************************************************************************************************
 // Recording control
-// This will start recording.If the recorder was already recording then the message is ignored.A filename is passed in as a ‘hint’.Since the recorder might 
+// This will start recording.If the recorder was already recording then the message is ignored.A filename is passed in as a 'hint'.Since the recorder might 
 // already be recording(or might not allow complete flexibility over its filename), the filename might or might not be used.If the filename is empty, or 
 // not present, a name will be chosen automatically. If you do not with to provide a filename hint you can simply pass NULL. 
 PROCESSINGNDILIB_API
