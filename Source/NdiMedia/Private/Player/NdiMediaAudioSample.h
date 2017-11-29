@@ -18,8 +18,8 @@ public:
 	/** Default constructor. */
 	FNdiMediaAudioSample()
 		: Duration(FTimespan::Zero())
-		, Frame({ 0 })
-		, FrameInterleaved({ 0 })
+		, Frame()
+		, FrameInterleaved()
 		, FrameInterleavedSize(0)
 		, ReceiverInstance(nullptr)
 		, ReferenceLevel(0)

@@ -95,34 +95,14 @@ void NDIlib_util_send_send_audio_interleaved_16s(NDIlib_send_instance_t p_instan
 PROCESSINGNDILIB_API
 void NDIlib_util_send_send_audio_interleaved_32f(NDIlib_send_instance_t p_instance, const NDIlib_audio_frame_interleaved_32f_t* p_audio_data);
 
-// Convert an planar floating point audio buffer into a interleaved short audio buffer. 
-// IMPORTANT : You must allocate the space for the samples in the destination to allow for your own memory management.
-PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
-void NDIlib_util_audio_to_interleaved_16s(const NDIlib_audio_frame_t* p_src, NDIlib_audio_frame_interleaved_16s_t* p_dst);
-
 PROCESSINGNDILIB_API 
 void NDIlib_util_audio_to_interleaved_16s_v2(const NDIlib_audio_frame_v2_t* p_src, NDIlib_audio_frame_interleaved_16s_t* p_dst);
-
-// Convert an interleaved short audio buffer audio buffer into a planar floating point one. 
-// IMPORTANT : You must allocate the space for the samples in the destination to allow for your own memory management.
-PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
-void NDIlib_util_audio_from_interleaved_16s(const NDIlib_audio_frame_interleaved_16s_t* p_src, NDIlib_audio_frame_t* p_dst);
 
 PROCESSINGNDILIB_API 
 void NDIlib_util_audio_from_interleaved_16s_v2(const NDIlib_audio_frame_interleaved_16s_t* p_src, NDIlib_audio_frame_v2_t* p_dst);
 
-// Convert an planar floating point audio buffer into a interleaved floating point audio buffer. 
-// IMPORTANT : You must allocate the space for the samples in the destination to allow for your own memory management.
-PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
-void NDIlib_util_audio_to_interleaved_32f(const NDIlib_audio_frame_t* p_src, NDIlib_audio_frame_interleaved_32f_t* p_dst);
-
 PROCESSINGNDILIB_API 
 void NDIlib_util_audio_to_interleaved_32f_v2(const NDIlib_audio_frame_v2_t* p_src, NDIlib_audio_frame_interleaved_32f_t* p_dst);
-
-// Convert an interleaved floating point audio buffer into a planar floating point one. 
-// IMPORTANT : You must allocate the space for the samples in the destination to allow for your own memory management.
-PROCESSINGNDILIB_API PROCESSINGNDILIB_DEPRECATED
-void NDIlib_util_audio_from_interleaved_32f(const NDIlib_audio_frame_interleaved_32f_t* p_src, NDIlib_audio_frame_t* p_dst);
 
 PROCESSINGNDILIB_API
 void NDIlib_util_audio_from_interleaved_32f_v2(const NDIlib_audio_frame_interleaved_32f_t* p_src, NDIlib_audio_frame_v2_t* p_dst);

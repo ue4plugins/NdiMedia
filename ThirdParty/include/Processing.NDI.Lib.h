@@ -56,7 +56,7 @@
 #define NDILIB_REDIST_FOLDER		"NDI_RUNTIME_DIR_V3"
 #define NDILIB_REDIST_URL			"http://new.tk/NDIRedistV3Apple"
 #else // __APPLE__
-#define NDILIB_LIBRARY_NAME			"libndi.so.3"
+#define NDILIB_LIBRARY_NAME			"libndi.so.3.11"
 #define NDILIB_REDIST_FOLDER		"NDI_RUNTIME_DIR_V3"
 #define NDILIB_REDIST_URL			""
 #endif // __APPLE__
@@ -65,6 +65,14 @@
 #define PROCESSINGNDILIB_API extern "C" __attribute((visibility("default")))
 #else
 #define PROCESSINGNDILIB_API __attribute((visibility("default")))
+#endif
+#endif
+
+#ifndef NULL
+#ifdef __cplusplus
+#define NULL 0
+#else
+#define NULL ((void *)0)
 #endif
 #endif
 
@@ -79,7 +87,6 @@
 // Data structures shared by multiple SDKs
 #include "Processing.NDI.compat.h"
 #include "Processing.NDI.structs.h"
-#include "Processing.NDI.structs_deprecated.h"
 
 // This is not actually required, but will start and end the libraries which might get
 // you slightly better performance in some cases. In general it is more "correct" to 
@@ -101,14 +108,25 @@ const char* NDIlib_version(void);
 PROCESSINGNDILIB_API
 bool NDIlib_is_supported_CPU(void);
 
-// The main SDKs
+// The finding (discovery API)
 #include "Processing.NDI.Find.h"
+
+// The receiveing video and audio API
 #include "Processing.NDI.Recv.h"
+// Extensions to support PTZ control, etc...
+#include "Processing.NDI.Recv.ex.h"
+
+// The sending video API
 #include "Processing.NDI.Send.h"
+
+// The routing of inputs API
 #include "Processing.NDI.Routing.h"
 
 // Utility functions
 #include "Processing.NDI.utilities.h"
+
+// Deprecated structures and functions
+#include "Processing.NDI.deprecated.h"
 
 // Dynamic loading used for OSS libraries
 #include "Processing.NDI.DynamicLoad.h"

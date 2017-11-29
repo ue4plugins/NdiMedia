@@ -26,14 +26,14 @@ bool FNdi::Initialize()
 	const FString LibDir = FPaths::Combine(*BaseDir, TEXT("ThirdParty"), TEXT("lib"));
 
 #if PLATFORM_LINUX
-	const FString Lib = FPaths::Combine(*LibDir, TEXT("linux"), TEXT("x86_64-linux-gnu-5.4"), TEXT("libndi.so.1.0.1"));
+	const FString Lib = FPaths::Combine(*LibDir, TEXT("linux"), TEXT("x86_64-linux-gnu"), ANSI_TO_TCHAR(NDILIB_LIBRARY_NAME));
 #elif PLATFORM_MAC
-	const FString Lib = FPaths::Combine(*LibDir, TEXT("apple"), TEXT("x64"), TEXT("libndi.dylib"));
+	const FString Lib = FPaths::Combine(*LibDir, TEXT("apple"), TEXT("x64"), ANSI_TO_TCHAR(NDILIB_LIBRARY_NAME));
 #elif PLATFORM_WINDOWS
 	#if PLATFORM_64BITS
-		const FString Lib = FPaths::Combine(*LibDir, TEXT("windows"), TEXT("x64"), TEXT("Processing.NDI.Lib.x64.dll"));
+		const FString Lib = FPaths::Combine(*LibDir, TEXT("windows"), TEXT("x64"), ANSI_TO_TCHAR(NDILIB_LIBRARY_NAME));
 	#else
-		const FString Lib = FPaths::Combine(*LibDir, TEXT("windows"), TEXT("x86"), TEXT("Processing.NDI.Lib.x86.dll"));
+		const FString Lib = FPaths::Combine(*LibDir, TEXT("windows"), TEXT("x86"), ANSI_TO_TCHAR(NDILIB_LIBRARY_NAME));
 	#endif
 #endif
 

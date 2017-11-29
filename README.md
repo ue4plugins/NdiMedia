@@ -19,12 +19,12 @@ that are not yet available in the UE4 Master branch.
 
 ## Supported Platforms
 
-This plug-in was last built against **Unreal Engine 4.18** and tested on the
-following platforms:
+This plug-in was last built against **Unreal Engine 4.18** on the following
+platforms:
 
-- ~~iOS~~
-- ~~Linux~~
-- ~~macOS~~
+- iOS (untested)
+- Linux (untested)
+- macOS (untested)
 - Windows
 
 

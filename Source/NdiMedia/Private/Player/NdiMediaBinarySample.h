@@ -15,7 +15,7 @@ public:
 
 	/** Default constructor. */
 	FNdiMediaBinarySample()
-		: Frame({ 0 })
+		: Frame()
 		, ReceiverInstance(nullptr)
 		, Time(FTimespan::Zero())
 	{ }

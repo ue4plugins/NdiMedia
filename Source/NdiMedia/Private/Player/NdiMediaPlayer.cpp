@@ -270,18 +270,19 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions* Options)
 		}
 	}
 
-	NDIlib_recv_create_t RcvCreateDesc;
+	NDIlib_recv_create_v3_t RcvCreateDesc;
 	{
 		RcvCreateDesc.source_to_connect_to = Source;
 		RcvCreateDesc.color_format = ColorFormat;
 		RcvCreateDesc.bandwidth = (NDIlib_recv_bandwidth_e)Bandwidth;
 		RcvCreateDesc.allow_video_fields = true;
+		RcvCreateDesc.p_ndi_name = "UE4";
 	};
 	
 	{
 		FScopeLock Lock(&CriticalSection);
 
-		ReceiverInstance = NDIlib_recv_create_v2(&RcvCreateDesc);
+		ReceiverInstance = NDIlib_recv_create_v3(&RcvCreateDesc);
 	}
 
 	if (ReceiverInstance == nullptr)

@@ -16,7 +16,7 @@ public:
 	/** Default constructor. */
 	FNdiMediaTextureSample()
 		: Duration(FTimespan::Zero())
-		, Frame({ 0 })
+		, Frame()
 		, ReceiverInstance(nullptr)
 		, SampleFormat(EMediaTextureSampleFormat::Undefined)
 		, Time(FTimespan::Zero())

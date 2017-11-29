@@ -64,6 +64,9 @@ inline NDIlib_tally_t::NDIlib_tally_t(bool on_program_, bool on_preview_)
 inline NDIlib_routing_create_t::NDIlib_routing_create_t(const char* p_ndi_name_, const char* p_groups_)
 	: p_ndi_name(p_ndi_name_), p_groups(p_groups_) {}
 
+inline NDIlib_recv_create_v3_t::NDIlib_recv_create_v3_t(const NDIlib_source_t source_to_connect_to_, NDIlib_recv_color_format_e color_format_,
+	NDIlib_recv_bandwidth_e bandwidth_, bool allow_video_fields_, const char* p_ndi_name_)
+	: source_to_connect_to(source_to_connect_to_), color_format(color_format_), bandwidth(bandwidth_), allow_video_fields(allow_video_fields_), p_ndi_name(p_ndi_name_) {}
 inline NDIlib_recv_create_t::NDIlib_recv_create_t(const NDIlib_source_t source_to_connect_to_, NDIlib_recv_color_format_e color_format_,
 												  NDIlib_recv_bandwidth_e bandwidth_, bool allow_video_fields_)
 	: source_to_connect_to(source_to_connect_to_), color_format(color_format_), bandwidth(bandwidth_), allow_video_fields(allow_video_fields_) {}
