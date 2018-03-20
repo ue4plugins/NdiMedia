@@ -65,7 +65,7 @@ namespace UnrealBuildTool.Rules
 				string DllPath = Path.Combine(LibDir, "libndi.so.3.0.11");
 
 				PublicAdditionalLibraries.Add("stdc++");
-				RuntimeDependencies.Add(new RuntimeDependency(DllPath));
+				RuntimeDependencies.Add(DllPath);
 			}
 			else if (Target.Platform == UnrealTargetPlatform.Mac)
 			{
@@ -75,7 +75,7 @@ namespace UnrealBuildTool.Rules
 				PublicLibraryPaths.Add(LibDir);
 				PublicAdditionalLibraries.Add(DllPath);
 				PublicDelayLoadDLLs.Add(DllPath);
-				RuntimeDependencies.Add(new RuntimeDependency(DllPath));
+				RuntimeDependencies.Add(DllPath);
 			}
 			else if (Target.Platform == UnrealTargetPlatform.Win32)
 			{
@@ -85,7 +85,7 @@ namespace UnrealBuildTool.Rules
 				PublicLibraryPaths.Add(LibDir);
 				PublicAdditionalLibraries.Add("Processing.NDI.Lib.x86.lib");
 				PublicDelayLoadDLLs.Add("Processing.NDI.Lib.x86.dll");
-				RuntimeDependencies.Add(new RuntimeDependency(DllPath));
+				RuntimeDependencies.Add(DllPath);
 			}
 			else if (Target.Platform == UnrealTargetPlatform.Win64)
 			{
@@ -95,7 +95,7 @@ namespace UnrealBuildTool.Rules
 				PublicLibraryPaths.Add(LibDir);
 				PublicAdditionalLibraries.Add("Processing.NDI.Lib.x64.lib");
 				PublicDelayLoadDLLs.Add("Processing.NDI.Lib.x64.dll");
-				RuntimeDependencies.Add(new RuntimeDependency(DllPath));
+				RuntimeDependencies.Add(DllPath);
 			}
 			else
 			{
