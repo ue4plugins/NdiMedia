@@ -19,7 +19,7 @@ that are not yet available in the UE4 Master branch.
 
 ## Supported Platforms
 
-This plug-in was last built against **Unreal Engine 4.19** and *NDI SDK 3* on
+This plug-in was last built against **Unreal Engine 4.19** and **NDI SDK 3** on
 the following platforms:
 
 - Linux (untested)
