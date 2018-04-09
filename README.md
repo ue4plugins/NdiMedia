@@ -22,7 +22,6 @@ that are not yet available in the UE4 Master branch.
 This plug-in was last built against **Unreal Engine 4.18** on the following
 platforms:
 
-- iOS (untested)
 - Linux (untested)
 - macOS (untested)
 - Windows
@@ -30,11 +29,16 @@ platforms:
 
 ## Prerequisites
 
-All required header files and libraries for supported platforms are included in
-this plug-in. If you'd like to make modifications to this plug-in, download the
-latest version of the NDI SDK from the Newtek web site for updated documentation
-and files.
+Strarting with 4.19, the required NDI header files and libraries are no longer
+included in this plug-in. Instead you must download and install the NewTek SDK
+for your platform. Verify that the *NDI_SDK_DIR* environment variable is set on
+your computer. Follow the NDI SDK Documentation for installation instructions.
 
+The users of your project must have the NDI Redist package for the desired
+target platform package installed. It contains the NDI run-time libraries that
+are required for this plug-in to work. You should bundle the redistributable
+package installer with your project installer. Installation of the NDI SDK is
+not necessary on end user machines.
 
 ## Dependencies
 
@@ -66,5 +70,6 @@ or email us at info@headcrash.industries
 ## References
 
 * [NewTek NDI SDK Download](http://pages.newtek.com/NDI-Developers.html)
+* [NewTek NDI Redist Download](http://new.tk/NDIRedistV3)
 * [NewTek NDI Homepage](http://newtek.com/ndi.html)
 * [Introduction to UE4 Plugins](https://wiki.unrealengine.com/An_Introduction_to_UE4_Plugins)
