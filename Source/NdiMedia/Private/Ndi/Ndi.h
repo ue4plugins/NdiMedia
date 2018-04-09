@@ -2,10 +2,14 @@
 
 #pragma once
 
+struct NDIlib_v3;
+
 
 class FNdi
 {
 public:
+
+	static const NDIlib_v3* Lib;
 
 	static bool Initialize();
 	static bool IsInitialized();

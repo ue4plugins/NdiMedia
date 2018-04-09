@@ -124,7 +124,7 @@ protected:
 	{
 		if (ReceiverInstance != nullptr)
 		{
-			NDIlib_recv_free_video_v2(ReceiverInstance, &Frame);
+			FNdi::Lib->NDIlib_recv_free_video_v2(ReceiverInstance, &Frame);
 
 			ReceiverInstance = nullptr;
 			Frame = { 0 };

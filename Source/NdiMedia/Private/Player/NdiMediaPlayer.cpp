@@ -71,7 +71,7 @@ void FNdiMediaPlayer::Close()
 
 		if (ReceiverInstance != nullptr)
 		{
-			NDIlib_recv_destroy(ReceiverInstance);
+			FNdi::Lib->NDIlib_recv_destroy(ReceiverInstance);
 			ReceiverInstance = nullptr;
 		}
 
@@ -157,10 +157,10 @@ IMediaSamples& FNdiMediaPlayer::GetSamples()
 FString FNdiMediaPlayer::GetStats() const
 {
 	NDIlib_recv_performance_t PerfDropped, PerfTotal;
-	NDIlib_recv_get_performance(ReceiverInstance, &PerfTotal, &PerfDropped);
+	FNdi::Lib->NDIlib_recv_get_performance(ReceiverInstance, &PerfTotal, &PerfDropped);
 
 	NDIlib_recv_queue_t Queue;
-	NDIlib_recv_get_queue(ReceiverInstance, &Queue);
+	FNdi::Lib->NDIlib_recv_get_queue(ReceiverInstance, &Queue);
 
 	FString StatsString;
 	{
@@ -280,19 +280,19 @@ bool FNdiMediaPlayer::Open(const FString& Url, const IMediaOptions* Options)
 		}
 	}
 
-	NDIlib_recv_create_v3_t RcvCreateDesc;
+	NDIlib_recv_create_t RcvCreateDesc;
 	{
 		RcvCreateDesc.source_to_connect_to = Source;
 		RcvCreateDesc.color_format = ColorFormat;
 		RcvCreateDesc.bandwidth = (NDIlib_recv_bandwidth_e)Bandwidth;
 		RcvCreateDesc.allow_video_fields = true;
-		RcvCreateDesc.p_ndi_name = TCHAR_TO_ANSI(*UniqueReceiverName);
+//		RcvCreateDesc.p_ndi_name = TCHAR_TO_ANSI(*UniqueReceiverName);
 	};
 	
 	{
 		FScopeLock Lock(&CriticalSection);
 
-		ReceiverInstance = NDIlib_recv_create_v3(&RcvCreateDesc);
+		ReceiverInstance = FNdi::Lib->NDIlib_recv_create_v2(&RcvCreateDesc);
 	}
 
 	if (ReceiverInstance == nullptr)
@@ -436,7 +436,7 @@ void FNdiMediaPlayer::TickInput(FTimespan DeltaTime, FTimespan Timecode)
 	}
 
 	// update player state
-	const bool IsConnected = (NDIlib_recv_get_no_connections(ReceiverInstance) > 0);
+	const bool IsConnected = (FNdi::Lib->NDIlib_recv_get_no_connections(ReceiverInstance) > 0);
 	const EMediaState State = Paused ? EMediaState::Paused : (IsConnected ? EMediaState::Playing : EMediaState::Preparing);
 
 	if (State != CurrentState)
@@ -732,7 +732,7 @@ void FNdiMediaPlayer::ProcessAudio()
 	while (true)
 	{
 		NDIlib_audio_frame_v2_t AudioFrame;
-		NDIlib_frame_type_e FrameType = NDIlib_recv_capture_v2(ReceiverInstance, nullptr, &AudioFrame, nullptr, 0);
+		NDIlib_frame_type_e FrameType = FNdi::Lib->NDIlib_recv_capture_v2(ReceiverInstance, nullptr, &AudioFrame, nullptr, 0);
 
 		if (FrameType == NDIlib_frame_type_error)
 		{
@@ -767,7 +767,7 @@ void FNdiMediaPlayer::ProcessAudio()
 			}
 			else
 			{
-				NDIlib_recv_free_audio_v2(ReceiverInstance, &AudioFrame);
+				FNdi::Lib->NDIlib_recv_free_audio_v2(ReceiverInstance, &AudioFrame);
 			}
 		}
 	}
@@ -782,7 +782,8 @@ void FNdiMediaPlayer::ProcessMetadataAndVideo()
 	{
 		NDIlib_metadata_frame_t MetadataFrame;
 		NDIlib_video_frame_v2_t VideoFrame;
-		NDIlib_frame_type_e FrameType = NDIlib_recv_capture_v2(ReceiverInstance, &VideoFrame, nullptr, &MetadataFrame, 0);
+
+		const NDIlib_frame_type_e FrameType = FNdi::Lib->NDIlib_recv_capture_v2(ReceiverInstance, &VideoFrame, nullptr, &MetadataFrame, 0);
 
 		if (FrameType == NDIlib_frame_type_error)
 		{
@@ -814,7 +815,7 @@ void FNdiMediaPlayer::ProcessMetadataAndVideo()
 			}
 			else
 			{
-				NDIlib_recv_free_metadata(ReceiverInstance, &MetadataFrame);
+				FNdi::Lib->NDIlib_recv_free_metadata(ReceiverInstance, &MetadataFrame);
 			}
 		}
 		else if (FrameType == NDIlib_frame_type_video)
@@ -840,7 +841,7 @@ void FNdiMediaPlayer::ProcessMetadataAndVideo()
 			}
 			else
 			{
-				NDIlib_recv_free_video_v2(ReceiverInstance, &VideoFrame);
+				FNdi::Lib->NDIlib_recv_free_video_v2(ReceiverInstance, &VideoFrame);
 			}
 		}
 	}
@@ -858,7 +859,7 @@ void FNdiMediaPlayer::SendMetadata(const FString& Metadata, int64 Timecode)
 		MetadataFrame.p_data = TCHAR_TO_ANSI(*Metadata);
 	}
 
-	NDIlib_recv_add_connection_metadata(ReceiverInstance, &MetadataFrame);
+	FNdi::Lib->NDIlib_recv_add_connection_metadata(ReceiverInstance, &MetadataFrame);
 }
 
 

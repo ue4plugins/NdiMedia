@@ -96,7 +96,7 @@ public:
 				FrameInterleavedSize = TotalSamples;
 			}
 
-			NDIlib_util_audio_to_interleaved_16s_v2(&Frame, &FrameInterleaved);
+			FNdi::Lib->NDIlib_util_audio_to_interleaved_16s_v2(&Frame, &FrameInterleaved);
 		}
 
 		return FrameInterleaved.p_data;
@@ -148,7 +148,7 @@ protected:
 	{
 		if (ReceiverInstance != nullptr)
 		{
-			NDIlib_recv_free_audio_v2(ReceiverInstance, &Frame);
+			FNdi::Lib->NDIlib_recv_free_audio_v2(ReceiverInstance, &Frame);
 
 			ReceiverInstance = nullptr;
 			Frame = { 0 };

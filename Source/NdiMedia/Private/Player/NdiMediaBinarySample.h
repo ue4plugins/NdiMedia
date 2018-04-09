@@ -80,7 +80,7 @@ protected:
 	{
 		if (ReceiverInstance != nullptr)
 		{
-			NDIlib_recv_free_metadata(ReceiverInstance, &Frame);
+			FNdi::Lib->NDIlib_recv_free_metadata(ReceiverInstance, &Frame);
 
 			ReceiverInstance = nullptr;
 			Frame = { 0 };

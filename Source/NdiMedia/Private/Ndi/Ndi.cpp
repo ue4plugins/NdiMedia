@@ -3,7 +3,9 @@
 #include "Ndi.h"
 #include "NdiMediaPrivate.h"
 
+#include "Containers/StringConv.h"
 #include "IPluginManager.h"
+#include "HAL/PlatformMisc.h"
 #include "HAL/PlatformProcess.h"
 #include "Misc/Paths.h"
 
@@ -11,6 +13,7 @@
 /* Static initialization
  *****************************************************************************/
 
+const NDIlib_v3* FNdi::Lib = nullptr;
 void* FNdi::LibHandle = nullptr;
 
 
@@ -20,41 +23,47 @@ void* FNdi::LibHandle = nullptr;
 bool FNdi::Initialize()
 {
 #if NDIMEDIA_DLL_PLATFORM
+	// determine runtime library path
+	TCHAR RedistDir[4096];
+	FPlatformMisc::GetEnvironmentVariable(ANSI_TO_TCHAR(NDILIB_REDIST_FOLDER), RedistDir, ARRAY_COUNT(RedistDir));
+	const FString LibPath = FPaths::Combine(RedistDir, ANSI_TO_TCHAR(NDILIB_LIBRARY_NAME));
 
-	// determine directory paths
-	const FString BaseDir = IPluginManager::Get().FindPlugin("NdiMedia")->GetBaseDir();
-	const FString LibDir = FPaths::Combine(*BaseDir, TEXT("ThirdParty"), TEXT("lib"));
+	if (!FPaths::FileExists(LibPath))
+	{
+		UE_LOG(LogNdiMedia, Warning, TEXT("Failed to find NDI runtime library %s: Please install the NDI Redist from %s."), *LibPath, ANSI_TO_TCHAR(NDILIB_REDIST_URL));
+		return false;
+	}
 
-#if PLATFORM_LINUX
-	const FString Lib = FPaths::Combine(*LibDir, TEXT("linux"), TEXT("x86_64-linux-gnu"), ANSI_TO_TCHAR(NDILIB_LIBRARY_NAME));
-#elif PLATFORM_MAC
-	const FString Lib = FPaths::Combine(*LibDir, TEXT("apple"), TEXT("x64"), ANSI_TO_TCHAR(NDILIB_LIBRARY_NAME));
-#elif PLATFORM_WINDOWS
-	#if PLATFORM_64BITS
-		const FString Lib = FPaths::Combine(*LibDir, TEXT("windows"), TEXT("x64"), ANSI_TO_TCHAR(NDILIB_LIBRARY_NAME));
-	#else
-		const FString Lib = FPaths::Combine(*LibDir, TEXT("windows"), TEXT("x86"), ANSI_TO_TCHAR(NDILIB_LIBRARY_NAME));
-	#endif
-#endif
-
-	LibHandle = FPlatformProcess::GetDllHandle(*Lib);
+	// load runtime library
+	LibHandle = FPlatformProcess::GetDllHandle(*LibPath);
 
 	if (LibHandle == nullptr)
 	{
-		UE_LOG(LogNdiMedia, Warning, TEXT("Failed to load required library %s. Plug-in will not be functional."), *Lib);
+		UE_LOG(LogNdiMedia, Warning, TEXT("Failed to load NDI runtime library %s: Please reinstall the NDI Redist from %s."), *LibPath, ANSI_TO_TCHAR(NDILIB_REDIST_URL));
 		return false;
 	}
-
 #endif //NDIMEDIA_DLL_PLATFORM
 
-	if (!NDIlib_is_supported_CPU())
+	typedef const NDIlib_v3* (*NDIlib_v3_load_fn)();
+	auto NDIlib_v3_load = (NDIlib_v3_load_fn)FPlatformProcess::GetDllExport(LibHandle, TEXT("NDIlib_v3_load"));
+
+	if (NDIlib_v3_load == nullptr)
 	{
-		UE_LOG(LogNdiMedia, Error, TEXT("Cannot initialize NDI: CPU is not supported"));
+		UE_LOG(LogNdiMedia, Error, TEXT("Failed to initialize NDI: The main DLL entry point could not be found"));
 		return false;
 	}
 
-	if (!NDIlib_initialize())
+	Lib = NDIlib_v3_load();
+
+	if (!Lib->NDIlib_is_supported_CPU())
 	{
+		UE_LOG(LogNdiMedia, Error, TEXT("Failed to initialize NDI: Your CPU is not supported"));
+		return false;
+	}
+
+	if (!Lib->NDIlib_initialize())
+	{
+		UE_LOG(LogNdiMedia, Error, TEXT("Failed to initialize NDI: Unknown error"));
 		return false;
 	}
 
@@ -72,9 +81,10 @@ void FNdi::Shutdown()
 {
 	if (LibHandle != nullptr)
 	{
-		NDIlib_destroy();
-
+		Lib->NDIlib_destroy();
 		FPlatformProcess::FreeDllHandle(LibHandle);
+
 		LibHandle = nullptr;
+		Lib = nullptr;
 	}
 }

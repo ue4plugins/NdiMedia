@@ -1,5 +1,6 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
+using System;
 using System.IO;
 
 namespace UnrealBuildTool.Rules
@@ -47,55 +48,14 @@ namespace UnrealBuildTool.Rules
 					"MediaAssets",
 				});
 
-			// add NDI libraries
-			string NdiDir = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "ThirdParty"));
-
-			PrivateIncludePaths.Add(Path.Combine(NdiDir, "include"));
-
-			if (Target.Platform == UnrealTargetPlatform.IOS)
+			// add NDI SDK
+			if ((Target.Platform == UnrealTargetPlatform.Linux) ||
+				(Target.Platform == UnrealTargetPlatform.Mac) ||
+				(Target.Platform == UnrealTargetPlatform.Win32) ||
+				(Target.Platform == UnrealTargetPlatform.Win64))
 			{
-				string LibDir = Path.Combine(NdiDir, "lib", "apple", "iOS");
-				string LibPath = Path.Combine(LibDir, "libndi_ios.a");
-
-				PublicAdditionalLibraries.Add(LibPath);
-			}
-			else if (Target.Platform == UnrealTargetPlatform.Linux)
-			{
-				string LibDir = Path.Combine(NdiDir, "lib", "linux", "x86_64-linux-gnu");
-				string DllPath = Path.Combine(LibDir, "libndi.so.3.0.11");
-
-				PublicAdditionalLibraries.Add("stdc++");
-				RuntimeDependencies.Add(DllPath);
-			}
-			else if (Target.Platform == UnrealTargetPlatform.Mac)
-			{
-				string LibDir = Path.Combine(NdiDir, "lib", "apple", "x64");
-				string DllPath = Path.Combine(LibDir, "libndi.3.dylib");
-
-				PublicLibraryPaths.Add(LibDir);
-				PublicAdditionalLibraries.Add(DllPath);
-				PublicDelayLoadDLLs.Add(DllPath);
-				RuntimeDependencies.Add(DllPath);
-			}
-			else if (Target.Platform == UnrealTargetPlatform.Win32)
-			{
-				string LibDir = Path.Combine(NdiDir, "lib", "windows", "x86");
-				string DllPath = Path.Combine(LibDir, "Processing.NDI.Lib.x86.dll");
-
-				PublicLibraryPaths.Add(LibDir);
-				PublicAdditionalLibraries.Add("Processing.NDI.Lib.x86.lib");
-				PublicDelayLoadDLLs.Add("Processing.NDI.Lib.x86.dll");
-				RuntimeDependencies.Add(DllPath);
-			}
-			else if (Target.Platform == UnrealTargetPlatform.Win64)
-			{
-				string LibDir = Path.Combine(NdiDir, "lib", "windows", "x64");
-				string DllPath = Path.Combine(LibDir, "Processing.NDI.Lib.x64.dll");
-
-				PublicLibraryPaths.Add(LibDir);
-				PublicAdditionalLibraries.Add("Processing.NDI.Lib.x64.lib");
-				PublicDelayLoadDLLs.Add("Processing.NDI.Lib.x64.dll");
-				RuntimeDependencies.Add(DllPath);
+				string SdkDir = Environment.ExpandEnvironmentVariables("%NDI_SDK_DIR%");
+				PrivateIncludePaths.Add(Path.Combine(SdkDir, "Include"));
 			}
 			else
 			{
