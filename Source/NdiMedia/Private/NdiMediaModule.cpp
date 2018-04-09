@@ -48,30 +48,20 @@ public:
 
 	virtual void StartupModule() override
 	{
-		// initialize NDI
 		if (!FNdi::Initialize())
 		{
 			UE_LOG(LogNdiMedia, Error, TEXT("Failed to initialize NDI"));
 			return;
 		}
 
-		// initialize NDI finder
 		GetMutableDefault<UNdiMediaFinder>()->Initialize();
-
 		Initialized = true;
 	}
 
 	virtual void ShutdownModule() override
 	{
-		if (!Initialized)
-		{
-			return;
-		}
-
-		Initialized = false;
-
-		// shut down NDI
 		FNdi::Shutdown();
+		Initialized = false;
 	}
 
 private:
