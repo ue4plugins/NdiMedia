@@ -4,9 +4,9 @@
 #include "NdiMediaPrivate.h"
 
 #include "Containers/StringConv.h"
-#include "IPluginManager.h"
 #include "HAL/PlatformMisc.h"
 #include "HAL/PlatformProcess.h"
+#include "Interfaces/IPluginManager.h"
 #include "Misc/Paths.h"
 
 
