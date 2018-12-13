@@ -60,13 +60,6 @@ If you use it as an Engine plug-in, clone this repository into the
 source code from GitHub is required for this.
 
 
-## Support
-
-Please [file an issue](https://github.com/ue4plugins/NdiMedia/issues), submit a
-[pull request](https://github.com/ue4plugins/NdiMedia/pulls?q=is%3Aopen+is%3Apr)
-or email us at info@headcrash.industries
-
-
 ## References
 
 * [NewTek NDI SDK Download](http://pages.newtek.com/NDI-Developers.html)
