@@ -2,8 +2,7 @@
 
 #pragma once
 
-struct NDIlib_v3;
-
+#include "Processing.NDI.Lib.h"
 
 class FNdi
 {
